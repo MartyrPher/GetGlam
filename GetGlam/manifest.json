@@ -1,0 +1,10 @@
+﻿{
+  "Name": "Get Glam",
+  "Author": "MartyrPher",
+  "Version": "1.0.0-beta-1.0.3",
+  "MinimumApiVersion": "3.0",
+  "Description": "Stardew Valley Gets Glam.",
+  "UniqueID": "MartyrPher.GetGlam",
+  "EntryDll": "GetGlam.dll",
+  "UpdateKeys": [ "Nexus: null" ]
+}
