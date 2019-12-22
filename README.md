@@ -3,6 +3,7 @@ Get Glam is a Stardew Valley mod that allows different player customizations to 
 
 ## Contents
 * [Install](#install)
+* [Config](#config)
 * [Features](#features)
 	* [Overview](#overview)
 	* [Accessories](#accessories)
@@ -11,12 +12,24 @@ Get Glam is a Stardew Valley mod that allows different player customizations to 
 	* [Faces and Noses](#faceandnose)
 	* [Hairstyles](#hairstyles)
 	* [Shoes](#shoes)
+* [Todo](#todo)
 
 ## Install
 1. [Install the latest version of SMAPI](https://smapi.io/).
 2. Install the mod from [Nexus]("Nexus").
 3. Unzip any Get Glam content packs into the `Mods` folder to intstall them.
 4. Run the game using SMAPI.
+
+## Config
+Get Glam has a config that allows different options to be changed, the options include:
+
+option                 | purpose
+-----------------------|--------
+`OpenGlamMenuKey`      | Default: `C`. Description: The key used to open the custimization menu.
+`NewHatsIgnoreHair`    | Default: `false`. Decription: Any new hats acquired automatically ignore the hairstyle.
+`DresserTableLocationX`| Default: `0`. Description: Change the X coordinate of the dresser in the Farmhouse.
+`DresserTableLocationY`| Default: `0`. Description: Chnage the Y coordinate of the dresser in the Farmhouse.
+`DrawDresserInMenu`    | Default: `true`. Description: Draws the dresser image behind the player in the Glam Menu.
 
 ## Features
 ### Overview
@@ -41,7 +54,7 @@ To add accessories to a content pack you need to:
 * Create a folder in the pack named `Accessories`.
 * Add in the custom image named `accessories.png` to the newly created `Accessories` folder. Size: 128xNumberOfAccessories
 
-Currently, Get Glam only supports one `accessories.png`.
+Currently, Get Glam only supports one `accessories.png` per content pack.
 
 ### Bases
 The player can swap between farmer bases that content packs provide.
@@ -54,7 +67,7 @@ To add a base to a content pack you need to:
 * Add in the custom image `farmer_girl_base_bald.png` for the female farmers bald base to the `Base` folder.
 
 The bald option NEEDS to be added to the `Base` folder in order for the content pack to work correctly with the mod.
-Currently, Get Glam only supports one type of base in a content pack.
+Currently, Get Glam only supports one `farmer_base.png`, `farmer_girl_base.png`, `farmer_base_bald.png` and `farmer_girl_base_bald.png` in a content pack.
 
 ### Dresser
 The dresser comes as the default from Get Dressed/Kisekae and can be changed with content packs.
@@ -63,7 +76,7 @@ To add dressers to a content pack you need to:
 * Create a folder in the pack named `Dresser`.
 * Add in the custom dresser image `dresser.png` to the newly created `Dresser` folder. Dresser Size: 16x32, `dresser.png` Size: 16xNumberOfDressers
 
-Currently, Get Glam only supports one `dresser.png`.
+Currently, Get Glam only supports one `dresser.png` per content pack.
 
 ### Faces and Noses
 Get Glam adds the option for the farmer to be able to swap between faces and noses for a particular base.
@@ -88,7 +101,7 @@ To add hair to a content pack you need to:
 * Create a folder in the pack named `Hairstyles`.
 * Add in the custom image named `hairstyles.png` to the newly created `Hairstyles` folder. Size:128xNumberOfHairstyles
 
-Currently, Get Glam only supports one `hairstyles.png`.
+Currently, Get Glam only supports one `hairstyles.png` per content pack.
 
 ### Shoes
 The player can change their shoes for any base provided with content packs.
@@ -96,4 +109,10 @@ The player can change their shoes for any base provided with content packs.
 To add shoes to a content pack you need to:
 * Create a folder in the pack named `Shoes`.
 * Add in the custom images named `"gender"_shoes{ShoeNumber}.png` to the newly created `Shoes` folder. Size: 92x672
-* Note: The naming convention for shoes need to be sequential. EX: First show needs to be named `male_shoes0.png`, second `male_shoes1.png`...and so on.
+
+## TODO
+* Update the load save screen with the new player custimizations.
+* Add in favorites so players can swap between different players.
+* Add in support for changing arms.
+* Add in support for adding skintones.
+* Make the dresser JA compatible for easy moving.
