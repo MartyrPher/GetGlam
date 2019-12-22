@@ -1,5 +1,5 @@
 # GetGlam
-Gets Glam is a Stardew Valley mod that allows different player customisations to be added to the game.
+Get Glam is a Stardew Valley mod that allows different player customizations to be added to the game, based off of GetDressed/Kisekae.
 
 ## Contents
 * [Install](#install)
@@ -10,7 +10,7 @@ Gets Glam is a Stardew Valley mod that allows different player customisations to
 	* [Dresser](#dresser)
 	* [Faces and Noses](#faceandnose)
 	* [Hairstyles](#hairstyles)
-	* [Shoes] (#shoes)
+	* [Shoes](#shoes)
 
 ## Install
 1. [Install the latest version of SMAPI](https://smapi.io/).
@@ -20,6 +20,10 @@ Gets Glam is a Stardew Valley mod that allows different player customisations to
 
 ## Features
 ### Overview
+Get Glam is an rewritten GetDressed/Kisekae for Stardew Valley 1.4.
+The base mod includes the dresser and all the face and nose options from Get Dressed.
+This mod differs from previous iterations since it adds content pack support.
+
 There are six folders that you are likely to see when downloading a Get Glam content pack:
 * Accessories
 * Base
