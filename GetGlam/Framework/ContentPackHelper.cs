@@ -343,14 +343,24 @@ namespace GetGlam.Framework
                 NoseIndex = 0;
                 FaceIndex = 0;
             }
-            
-            
-            //Create new shoeTexture and check the shoe index to load the right shoe
+
             Texture2D shoeTexture;
-            if (ShoeIndex == 0)
+            //Create new shoeTexture and check the shoe index to load the right shoe
+            try
+            {
+                if (ShoeIndex == 0)
+                    shoeTexture = Entry.Helper.Content.Load<Texture2D>(IsMale ? "assets/farmer_base_shoes.png" : "assets/farmer_girl_base_shoes.png");
+                else
+                    shoeTexture = IsMale ? MaleShoeTextureList[ShoeIndex - 1] : FemaleShoeTextureList[ShoeIndex - 1];
+            }
+            catch
+            {
+                //This error pops up when the user saves at a shoe index then removes the content pack
+                Entry.Monitor.Log("Could not find a shoe at the index. Did you remove a pack that added shoes? Setting to deafault.", LogLevel.Warn);
+                ShoeIndex = 0;
+                
                 shoeTexture = Entry.Helper.Content.Load<Texture2D>(IsMale ? "assets/farmer_base_shoes.png" : "assets/farmer_girl_base_shoes.png");
-            else
-                shoeTexture = IsMale ? MaleShoeTextureList[ShoeIndex - 1] : FemaleShoeTextureList[ShoeIndex - 1];
+            }
 
             //Patch the player base with the shoes
             int[] shoeHeights = IsMale ? MaleShoeSpriteHeights : FemaleShoeSpriteHeights;
