@@ -389,6 +389,8 @@ namespace GetGlam.Framework
                 PlayerLoader.SaveCharacterLayout(Game1.player.isMale, BaseIndex, Game1.player.skin.Value, Game1.player.hair.Value, FaceIndex, NoseIndex, ShoeIndex, Game1.player.accessory.Value, DresserIndex, IsBald);
         }
 
+        /// <summary>Update the buttons for changing the face and nose.</summary>
+        /// <param name="isFaceAndNoseDrawing">Wether the face and nose buttons are drawing</param>
         private void UpdateFaceAndNoseButtonsPositions(bool isFaceAndNoseDrawing)
         {
             if (isFaceAndNoseDrawing)
@@ -550,7 +552,8 @@ namespace GetGlam.Framework
             else
             {
                 b.Draw(Game1.daybg, new Vector2(this.xPositionOnScreen + this.width / 2 - 64, this.yPositionOnScreen + this.height / 2 - 64), Color.White);
-                b.Draw(Dresser.Texture, new Vector2(NewRightButtonsList[4].bounds.X + 64, NewRightButtonsList[4].bounds.Y), Dresser.TextureSourceRect, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0.86f);
+                if (shouldDrawDresserButtons)
+                    b.Draw(Dresser.Texture, new Vector2(NewRightButtonsList[4].bounds.X + 64, NewRightButtonsList[4].bounds.Y), Dresser.TextureSourceRect, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0.86f);
             }
 
             //Draw the Farmer!!!
