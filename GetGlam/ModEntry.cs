@@ -28,6 +28,11 @@ namespace GetGlam
         //Instance of PlayerLoader
         private CharacterLoader PlayerLoader;
 
+        //Instance of SaveLoadMenuPatcher
+        private SaveLoadMenuPatcher MenuPatcher;
+
+        public bool IsSpaceCoreInstalled = false;
+
         /// <summary>The mods entry point.</summary>>
         /// <param name="helper">SMAPI's mod helper</param>
         public override void Entry(IModHelper helper)
@@ -39,12 +44,26 @@ namespace GetGlam
             PackHelper = new ContentPackHelper(this);
             Dresser = new DresserHandler(this, Config);
             PlayerLoader = new CharacterLoader(this, PackHelper, Dresser);
+            MenuPatcher = new SaveLoadMenuPatcher(this, PlayerLoader);
             
             //Set up the events
             helper.Events.Input.ButtonPressed += OnButtonPressed;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             helper.Events.GameLoop.ReturnedToTitle += OnReturnedToTitle;
+
+            //Check if SpaceCore is Installed
+            IsSpaceCoreInstalled = Helper.ModRegistry.IsLoaded("spacechase0.SpaceCore");
+            Monitor.Log($"Space Core: {IsSpaceCoreInstalled}", LogLevel.Alert);
+
+            //if it's installed then register the extended tilesheets
+            if (IsSpaceCoreInstalled)
+            {
+                SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\hairstyles", 96);
+            }
+
+            //Initialized the LoadSaveMenu Patcher
+            MenuPatcher.Init();
 
             //Conduct the Harmony Patch
             Harmony = HarmonyInstance.Create(this.ModManifest.UniqueID);
@@ -59,7 +78,7 @@ namespace GetGlam
         /// <param name="e">The Save Loaded Event arguement</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            //Create the Menu and set the var in DresserHandler
+            //Create the Menus and set the var in DresserHandler
             Menu = new GlamMenu(this, Config, PackHelper, Dresser, PlayerLoader);
             Dresser.Menu = Menu;
 

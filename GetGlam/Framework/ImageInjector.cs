@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SpaceCore;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -18,6 +19,8 @@ namespace GetGlam.Framework
 
         //The HairTexture height, default: 672
         private int HairTextureHeight = 672;
+
+        private int HairTextureWidth = 0;
 
         //The AccessoryTexture Height, default: 96
         private static int AccessoryTextureHeight = 96;
@@ -71,19 +74,43 @@ namespace GetGlam.Framework
                 //Loop through each hair loaded and extend the image
                 foreach (var hair in PackHelper.HairList)
                 {
-                    if ((hair.TextureHeight + HairTextureHeight) > 4096)
-                    {
-                        Entry.Monitor.Log($"{hair.ModName} hairstyles cannot be added to the game, the texture is too big.", LogLevel.Error);
-                        return;
-                    }
+                    int hairTextureX = 0;
+                    int hairTextureY = 0;
 
-                    //Patch the hair texture and change the hair texture height
-                    asset.AsImage().PatchImage(hair.Texture, null, new Rectangle(0, HairTextureHeight, 128, hair.Texture.Height));
-                    HairTextureHeight += hair.TextureHeight;
+                    for (int i = 0; i < hair.NumberOfHairstyles; i++)
+                    {
+                        if ((HairTextureHeight + 96) > 4096 && Entry.IsSpaceCoreInstalled)
+                        {
+                            Entry.Monitor.Log($"{hair.ModName} hairstyles cannot be added to the game, the texture is too big.", LogLevel.Error);
+                            return;
+                        }
+
+                        //Patch the hair texture and change the hair texture height
+                        if (Entry.IsSpaceCoreInstalled)
+                            asset.AsImage().PatchExtendedTileSheet(hair.Texture, new Rectangle(hairTextureX, hairTextureY, 16, 96), new Rectangle(HairTextureWidth, HairTextureHeight, 16, 96));
+                        else
+                            asset.AsImage().PatchImage(hair.Texture, new Rectangle(hairTextureX, hairTextureY, 16, 96), new Rectangle(HairTextureWidth, HairTextureHeight, 16, 96));
+
+                        if (hairTextureX + 16 == 128)
+                        {
+                            hairTextureX = 0;
+                            hairTextureY += 96;
+                        }
+                        else
+                            hairTextureX += 16;
+
+                        if (HairTextureWidth + 16 == 128)
+                        {
+                            HairTextureWidth = 0;
+                            HairTextureHeight += 96;
+                        }
+                        else
+                            HairTextureWidth += 16;
+                    }
                 }
 
                 //Cut the blank image from the image
-                CutEmptyImage(asset, HairTextureHeight, 128);
+                //CutEmptyImage(asset, HairTextureHeight, 128);
             }
 
             //If the asset is accessories
