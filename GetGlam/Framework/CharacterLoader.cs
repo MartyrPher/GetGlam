@@ -1,4 +1,5 @@
 ﻿using GetGlam.Framework.DataModels;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 using System.Collections.Generic;
@@ -48,6 +49,7 @@ namespace GetGlam.Framework
         {
             //Save all the current player index to the ConfigModel
             ConfigModel currentPlayerStyle = new ConfigModel();
+            currentPlayerStyle.IsDefault = false;
             currentPlayerStyle.IsMale = isMale;
             currentPlayerStyle.BaseIndex = baseIndex;
             currentPlayerStyle.SkinIndex = skinIndex;
@@ -77,21 +79,25 @@ namespace GetGlam.Framework
             if (currentPlayerStyle is null)
                 return;
 
-            //Update the dresser and Update the Menu Indexes
+            //Update the dresser
             Dresser.TextureSourceRect.Y = currentPlayerStyle.DresserIndex.Equals(1) ? 0 : currentPlayerStyle.DresserIndex * 32 - 32;
             Dresser.SetDresserTileSheetPoint(currentPlayerStyle.DresserIndex);
-            menu.UpdateIndexes(currentPlayerStyle.BaseIndex, currentPlayerStyle.FaceIndex, currentPlayerStyle.NoseIndex, currentPlayerStyle.ShoesIndex, currentPlayerStyle.IsBald, currentPlayerStyle.DresserIndex);
 
-            //Set the players gender, hair, accessory and skin
-            Game1.player.changeGender(currentPlayerStyle.IsMale);
-            Game1.player.hair.Set(currentPlayerStyle.HairIndex);
-            Game1.player.accessory.Set(currentPlayerStyle.AccessoryIndex);
-            Game1.player.FarmerRenderer.recolorSkin(currentPlayerStyle.SkinIndex);
+            if (!currentPlayerStyle.IsDefault)
+            {
+                menu.UpdateIndexes(currentPlayerStyle.BaseIndex, currentPlayerStyle.FaceIndex, currentPlayerStyle.NoseIndex, currentPlayerStyle.ShoesIndex, currentPlayerStyle.IsBald, currentPlayerStyle.DresserIndex);
 
-            //Change the color of the hair and the eyes
-            Game1.player.newEyeColor.Set(currentPlayerStyle.EyeColor);
-            Game1.player.FarmerRenderer.recolorEyes(currentPlayerStyle.EyeColor);
-            Game1.player.hairstyleColor.Set(currentPlayerStyle.HairColor);
+                //Set the players gender, hair, accessory and skin
+                Game1.player.changeGender(currentPlayerStyle.IsMale);
+                Game1.player.hair.Set(currentPlayerStyle.HairIndex);
+                Game1.player.accessory.Set(currentPlayerStyle.AccessoryIndex);
+                Game1.player.FarmerRenderer.recolorSkin(currentPlayerStyle.SkinIndex);
+
+                //Change the color of the hair and the eyes
+                Game1.player.newEyeColor.Set(currentPlayerStyle.EyeColor);
+                Game1.player.FarmerRenderer.recolorEyes(currentPlayerStyle.EyeColor);
+                Game1.player.hairstyleColor.Set(currentPlayerStyle.HairColor);
+            }
 
             //Add the favorites to the favorites list
             if (currentPlayerStyle.Favorites == null)
@@ -103,7 +109,8 @@ namespace GetGlam.Framework
             }
 
             //Lastly, change the base, THIS NEEDS TO BE LAST OR ELSE IT WON'T LOAD THE PLAYER STYLE
-            PackHelper.ChangePlayerBase(Game1.player.isMale, currentPlayerStyle.BaseIndex, currentPlayerStyle.FaceIndex, currentPlayerStyle.NoseIndex, currentPlayerStyle.ShoesIndex, currentPlayerStyle.IsBald);
+            if (!currentPlayerStyle.IsDefault)
+                PackHelper.ChangePlayerBase(Game1.player.isMale, currentPlayerStyle.BaseIndex, currentPlayerStyle.FaceIndex, currentPlayerStyle.NoseIndex, currentPlayerStyle.ShoesIndex, currentPlayerStyle.IsBald);
         }
 
         /// <summary>Loads the farmers for the Load Save Menu</summary>
@@ -111,15 +118,21 @@ namespace GetGlam.Framework
         /// <param name="configModel">The config model for the current farmer</param>
         public void LoadFarmersLayoutForLoadMenu(Farmer farmer, ConfigModel configModel)
         {
+            //Don't want to edit if it's a new config
+            if (configModel.IsDefault)
+                return;
+
             //Change gender, hair, accessory, and skin
             farmer.changeGender(configModel.IsMale);
             farmer.hair.Set(configModel.HairIndex);
             farmer.accessory.Set(configModel.AccessoryIndex);
-            farmer.skin.Set(configModel.SkinIndex);
+            farmer.FarmerRenderer.recolorSkin(configModel.SkinIndex);
+            farmer.FarmerRenderer.recolorEyes(configModel.EyeColor);
+            farmer.changeHairColor(configModel.HairColor);
 
             //Change the base
             PackHelper.ChangePlayerBase(configModel.IsMale, configModel.BaseIndex, configModel.FaceIndex, configModel.NoseIndex, configModel.ShoesIndex, configModel.IsBald);
-            //Entry.Helper.Reflection.GetField<Texture2D>(farmer.FarmerRenderer, "baseTexture").SetValue(PackHelper.LoadPlayerBase());
+            Entry.Helper.Reflection.GetField<Texture2D>(farmer.FarmerRenderer, "baseTexture").SetValue(PackHelper.LoadPlayerBase());
         }
 
         /// <summary>Loads a favorite from the favorite list</summary>

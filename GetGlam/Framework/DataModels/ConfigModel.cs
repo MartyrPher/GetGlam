@@ -9,6 +9,9 @@ namespace GetGlam.Framework.DataModels
         //The save folders name
         public string SaveFolderName;
 
+        //Whether it's the deafault config
+        public bool IsDefault = true;
+
         //Whether the player is male
         public bool IsMale;
 
