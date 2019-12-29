@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SpaceCore;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -20,16 +19,23 @@ namespace GetGlam.Framework
         //The HairTexture height, default: 672
         private int HairTextureHeight = 672;
 
+        //The width of where to put the hair in the asset
         private int HairTextureWidth = 0;
 
-        //The AccessoryTexture Height, default: 96
+        //The AccessoryTexture starting X, default: 96
         private static int AccessoryTextureHeight = 96;
+
+        //The skin color starting Y, default: 24
+        private static int SkinColorTextureHeight = 24;
 
         //The DresserTexture Height, default: 32
         private int DresserTextureHeight = 32;
 
         //Was the Dresser image already edited???
         private bool WasDresserImageEdited = false;
+
+        //Why do I even need this?
+        private int SkinEditedCounter = 0;
 
         /// <summary>Image Injectors Constructor</summary>
         /// <param name="entry"></param>
@@ -50,6 +56,8 @@ namespace GetGlam.Framework
             if (asset.AssetNameEquals("Characters\\Farmer\\hairstyles"))
                 return true;
             else if (asset.AssetNameEquals("Characters\\Farmer\\accessories"))
+                return true;
+            else if (asset.AssetNameEquals("Characters\\Farmer\\skinColors"))
                 return true;
             else if (asset.AssetNameEquals($"Mods/{Entry.ModManifest.UniqueID}/dresser.png"))
                 return true;
@@ -74,12 +82,13 @@ namespace GetGlam.Framework
                 //Loop through each hair loaded and extend the image
                 foreach (var hair in PackHelper.HairList)
                 {
+                    //Ints to run throught the current hairstyles.png to find each hairstyle within the png
                     int hairTextureX = 0;
                     int hairTextureY = 0;
 
                     for (int i = 0; i < hair.NumberOfHairstyles; i++)
                     {
-                        if ((HairTextureHeight + 96) > 4096 && Entry.IsSpaceCoreInstalled)
+                        if ((HairTextureHeight + 96) >= 4032 && !Entry.IsSpaceCoreInstalled)
                         {
                             Entry.Monitor.Log($"{hair.ModName} hairstyles cannot be added to the game, the texture is too big.", LogLevel.Error);
                             return;
@@ -87,10 +96,11 @@ namespace GetGlam.Framework
 
                         //Patch the hair texture and change the hair texture height
                         if (Entry.IsSpaceCoreInstalled)
-                            asset.AsImage().PatchExtendedTileSheet(hair.Texture, new Rectangle(hairTextureX, hairTextureY, 16, 96), new Rectangle(HairTextureWidth, HairTextureHeight, 16, 96));
+                            Entry.SpaceCorePatchExtendedTileSheet(asset.AsImage(), hair.Texture, new Rectangle(hairTextureX, hairTextureY, 16, 96), new Rectangle(HairTextureWidth, HairTextureHeight, 16, 96));
                         else
                             asset.AsImage().PatchImage(hair.Texture, new Rectangle(hairTextureX, hairTextureY, 16, 96), new Rectangle(HairTextureWidth, HairTextureHeight, 16, 96));
 
+                        //Change which hair is being added from the source texture
                         if (hairTextureX + 16 == 128)
                         {
                             hairTextureX = 0;
@@ -99,6 +109,7 @@ namespace GetGlam.Framework
                         else
                             hairTextureX += 16;
 
+                        //Change where to put the hair on the asset
                         if (HairTextureWidth + 16 == 128)
                         {
                             HairTextureWidth = 0;
@@ -138,6 +149,40 @@ namespace GetGlam.Framework
 
                 //Cut the blank image from the image
                 CutEmptyImage(asset, AccessoryTextureHeight, 128);
+            }
+
+            if (asset.AssetNameEquals("Characters\\Farmer\\skinColors"))
+            {
+                //Break if the skin colors were already edited
+                if (SkinEditedCounter != 4)
+                {
+                    SkinEditedCounter++;
+                    return;
+                }
+
+                SkinEditedCounter = 0;
+                //Create a new texture and set it as the old one
+                Texture2D oldTexture = asset.AsImage().Data;
+                Texture2D newTexture = new Texture2D(Game1.graphics.GraphicsDevice, oldTexture.Width, Math.Max(oldTexture.Height, 4096));
+                asset.ReplaceWith(newTexture);
+                asset.AsImage().PatchImage(oldTexture);
+
+                //Loop through each skin color loaded and extend the image
+                foreach (var skinColor in PackHelper.SkinColorList)
+                {
+                    if ((skinColor.TextureHeight + SkinColorTextureHeight) > 4096)
+                    {
+                        Entry.Monitor.Log($"{skinColor.ModName} skin colors cannot be added to the game, the texture is too big. Please show this Alert to MartyrPher and I guess they'll have to extend the skinColor image...uhh yea. Why do you need 4096 skin colors anyway?", LogLevel.Alert);
+                        return;
+                    }
+
+                    //Patch the skin color and change the skin color height
+                    asset.AsImage().PatchImage(skinColor.Texture, null, new Rectangle(0, SkinColorTextureHeight, 3, skinColor.TextureHeight));
+                    SkinColorTextureHeight += skinColor.TextureHeight;
+                }
+
+                //Cut the blank image
+                CutEmptyImage(asset, SkinColorTextureHeight, 3);
             }
 
             //If the asset is the dresser
@@ -192,6 +237,20 @@ namespace GetGlam.Framework
         public static int GetNumberOfAccessoriesMinusOne()
         {
             return AccessoryTextureHeight / 32 * 8 / 2 - 1;
+        }
+
+        /// <summary>Get the number of skin color, used in SkinColorPatch</summary>
+        /// <returns>The number of Skin Colors</returns>
+        public static int GetNumberOfSkinColor()
+        {
+            return SkinColorTextureHeight;
+        }
+
+        /// <summary>Get the number of skin color minus one, used in SkinColorPatch</summary>
+        /// <returns>The number of Skin Colors minus one</returns>
+        public static int GetNumberOfSkinColorMinusOne()
+        {
+            return SkinColorTextureHeight - 1;
         }
 
         /// <summary>Cuts the empty image from the texture.</summary>
