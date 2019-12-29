@@ -158,7 +158,7 @@ namespace GetGlam.Framework
         {
             Game1.player.changeGender(FarmerSnapshot[0] == 0 ? true : false);
             Game1.player.changeSkinColor(FarmerSnapshot[2]);
-            Game1.player.changeHairStyle(FarmerSnapshot[3]);
+            Game1.player.hair.Set(FarmerSnapshot[3]);
             Game1.player.changeAccessory(FarmerSnapshot[7]);
 
             Game1.player.FarmerRenderer.recolorEyes(EyeColorSnapshot);
@@ -181,6 +181,7 @@ namespace GetGlam.Framework
             NewLeftButtonsList.Add(new ClickableTextureComponent("LeftNose", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 464, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
             NewLeftButtonsList.Add(new ClickableTextureComponent("LeftShoe", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 528, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
             NewLeftButtonsList.Add(new ClickableTextureComponent("LeftDresser", new Rectangle(this.xPositionOnScreen + this.width / 2 - 114, this.yPositionOnScreen + 200, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
+            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftHair", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 272, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
 
             //Add all the new right buttons to the list
             NewRightButtonsList.Add(new ClickableTextureComponent("RightBase", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 128, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
@@ -188,12 +189,13 @@ namespace GetGlam.Framework
             NewRightButtonsList.Add(new ClickableTextureComponent("RightNose", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 464, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
             NewRightButtonsList.Add(new ClickableTextureComponent("RightShoe", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 528, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
             NewRightButtonsList.Add(new ClickableTextureComponent("RightDresser", new Rectangle(this.xPositionOnScreen + this.width / 2 + 48, this.yPositionOnScreen + 200, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+            NewRightButtonsList.Add(new ClickableTextureComponent("RightHair", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 272, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
 
             //Create buttons and add new labels to the list
             FavoriteMenuTab = new ClickableTextureComponent("FavoriteTab", new Rectangle(this.xPositionOnScreen - IClickableMenu.borderWidth - 8, this.yPositionOnScreen + 160, 64, 64), null, "FavoriteTab", Game1.mouseCursors, new Rectangle(656, 80, 16, 16), 4f, false);
             GlamMenuTab = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen - IClickableMenu.borderWidth + 1, this.yPositionOnScreen + 96, 64, 64), Game1.mouseCursors, new Rectangle(672, 80, 15, 16), 4f, false);
             HatCoversHairButton = new ClickableTextureComponent("HatFix", new Rectangle(this.xPositionOnScreen + this.width / 2 - 114, this.yPositionOnScreen + 128, 36, 36), null, "Hat Hair Fix", Game1.mouseCursors, new Rectangle(227, 425, 9, 9), 4f, false);
-            AddToFavoritesButton = new ClickableTextureComponent("Favorite", new Rectangle(this.xPositionOnScreen + this.width - 128, this.yPositionOnScreen + 224, 48, 48), null, "Favorite", Game1.mouseCursors, new Rectangle(346, 392, 8, 8), 6f, false);
+            AddToFavoritesButton = new ClickableTextureComponent("Favorite", new Rectangle(this.xPositionOnScreen + this.width - 96, this.yPositionOnScreen + 224, 48, 48), null, "Favorite", Game1.mouseCursors, new Rectangle(346, 392, 8, 8), 6f, false);
             NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[0].bounds.X + 70, NewLeftButtonsList[0].bounds.Y + 16, 1, 1), "Base", "Base"));
             NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[1].bounds.X + 70, NewLeftButtonsList[1].bounds.Y + 16, 1, 1), "Face", "Face"));
             NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[2].bounds.X + 70, NewLeftButtonsList[2].bounds.Y + 16, 1, 1), "Nose", "Nose"));
@@ -214,6 +216,10 @@ namespace GetGlam.Framework
                     buttonComponent.bounds.X -= 30;
                     buttonComponent.bounds.Y -= 128;
                 }
+
+                //Disable the previous hair button
+                if (buttonComponent.name.Contains("Hair"))
+                    buttonComponent.visible = false;
             }
 
             //Change the bounds in the already created right selection button list
@@ -229,6 +235,10 @@ namespace GetGlam.Framework
                     buttonComponent.bounds.X -= 30;
                     buttonComponent.bounds.Y -= 128;
                 }
+
+                //Disable the previous hair button
+                if (buttonComponent.name.Contains("Hair"))
+                    buttonComponent.visible = false;
             }
 
             //Change the bounds and set color pickers for the labels
@@ -423,6 +433,9 @@ namespace GetGlam.Framework
             {
                 if (hairButton.containsPoint(x, y) && hairButton.name.Contains("Hair"))
                 {
+                    if (Game1.player.hair.Get().Equals(0))
+                        Game1.player.hair.Set(PackHelper.NumberOfHairstlyesAdded);
+
                     if (Game1.player.FarmerRenderer.textureName.Value.Contains("bald"))
                     {
                         IsBald = true;
@@ -633,6 +646,18 @@ namespace GetGlam.Framework
                     ShoeIndex = 0;
                     PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
+                case "LeftHair":
+                    if (Game1.player.hair.Get().Equals(0))
+                        Game1.player.hair.Set(PackHelper.NumberOfHairstlyesAdded - 1);
+                    else
+                        Game1.player.hair.Set(Game1.player.hair.Get() + direction);
+                    break;
+                case "RightHair":
+                    if (Game1.player.hair.Get().Equals(PackHelper.NumberOfHairstlyesAdded - 1))
+                        Game1.player.hair.Set(0);
+                    else
+                        Game1.player.hair.Set(Game1.player.hair.Get() + direction);
+                    break;
             }
         }
 
@@ -686,8 +711,9 @@ namespace GetGlam.Framework
                 UpdateFaceAndNoseButtonsPositions(shouldDrawNosesAndFaceButtons);
             }
 
-            //Draw the add to favorites button
+            //Draw the add to favorites button and the text
             AddToFavoritesButton.draw(b);
+            Utility.drawTextWithShadow(b, "Add Fav:", Game1.smallFont, new Vector2(AddToFavoritesButton.bounds.X - 112, AddToFavoritesButton.bounds.Y + 8), Game1.textColor);
 
             //Draw each of the left selection buttons
             foreach (ClickableTextureComponent component in this.leftSelectionButtons)
