@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -48,14 +51,19 @@
     <Compile Include="Framework\ContentLoader.cs" />
     <Compile Include="Framework\ContentPackHelper.cs" />
     <Compile Include="Framework\DataModels\AccessoryModel.cs" />
+    <Compile Include="Framework\DataModels\SkinColorModel.cs" />
     <Compile Include="Framework\DataModels\DresserModel.cs" />
     <Compile Include="Framework\DataModels\FaceNoseModel.cs" />
+    <Compile Include="Framework\DataModels\ConfigModel.cs" />
     <Compile Include="Framework\DataModels\FavoriteModel.cs" />
     <Compile Include="Framework\DataModels\HairModel.cs" />
     <Compile Include="Framework\DresserHandler.cs" />
+    <Compile Include="Framework\FavoriteMenu.cs" />
     <Compile Include="Framework\GlamMenu.cs" />
     <Compile Include="Framework\HatEditor.cs" />
     <Compile Include="Framework\ImageInjector.cs" />
+    <Compile Include="Framework\Patches\SkinColorPatch.cs" />
+    <Compile Include="Framework\SaveLoadMenuPatcher.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="Framework\Patches\AccessoryPatch.cs" />
     <Compile Include="ModEntry.cs" />
