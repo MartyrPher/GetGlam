@@ -5,6 +5,8 @@ using StardewValley;
 using Harmony;
 using GetGlam.Framework.Patches;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
+using Microsoft.Xna.Framework;
 
 namespace GetGlam
 {
@@ -31,6 +33,7 @@ namespace GetGlam
         //Instance of SaveLoadMenuPatcher
         private SaveLoadMenuPatcher MenuPatcher;
 
+        //Whether SpaceCore is installed
         public bool IsSpaceCoreInstalled = false;
 
         /// <summary>The mods entry point.</summary>>
@@ -59,7 +62,8 @@ namespace GetGlam
             //if it's installed then register the extended tilesheets
             if (IsSpaceCoreInstalled)
             {
-                SpaceCore.TileSheetExtensions.RegisterExtendedTileSheet("Characters\\Farmer\\hairstyles", 96);
+                Monitor.Log("Reflecting into SpaceCore", LogLevel.Trace);
+                SpaceCoreHackery();
             }
 
             //Initialized the LoadSaveMenu Patcher
@@ -67,10 +71,28 @@ namespace GetGlam
 
             //Conduct the Harmony Patch
             Harmony = HarmonyInstance.Create(this.ModManifest.UniqueID);
-            PatchAccessoriesLength();
+            CommenceHarmonyPatch();
 
             //Add the ContentLoader class to the AssetLoader List
             helper.Content.AssetLoaders.Add(new ContentLoader(this, PackHelper));
+        }
+
+        private void SpaceCoreHackery()
+        {
+            var modData = Helper.ModRegistry.Get("spacechase0.SpaceCore");
+            var spaceCoreInstance = modData.GetType().GetProperty("Mod", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).GetValue(modData);
+            var spaceCoreAssembly = spaceCoreInstance.GetType().Assembly;
+            var registerTileSheet = spaceCoreAssembly.GetType("SpaceCore.TileSheetExtensions").GetMethod("RegisterExtendedTileSheet");
+            registerTileSheet.Invoke(null, new object[] { "Characters\\Farmer\\hairstyles", 96 });
+        }
+
+        public void SpaceCorePatchExtendedTileSheet(IAssetDataForImage asset, Texture2D sourceTexture, Rectangle sourceRect, Rectangle targetRect)
+        {
+            var modData = Helper.ModRegistry.Get("spacechase0.SpaceCore");
+            var spaceCoreInstance = modData.GetType().GetProperty("Mod", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public).GetValue(modData);
+            var spaceCoreAssembly = spaceCoreInstance.GetType().Assembly;
+            var patchExtendedTileSheet = spaceCoreAssembly.GetType("SpaceCore.TileSheetExtensions").GetMethod("PatchExtendedTileSheet");
+            patchExtendedTileSheet.Invoke(null, new object[] { asset, sourceTexture, sourceRect, targetRect, PatchMode.Replace});
         }
 
         /// <summary>Event that is called when a save is loaded.</summary>
@@ -134,17 +156,25 @@ namespace GetGlam
             Dresser.DresserInteractCheck(e.Button);
         }
 
-        /// <summary>Harmony patch to patch the accessory length</summary>
-        private void PatchAccessoriesLength()
+        /// <summary>Harmony patch to patch the accessory length and skin color length</summary>
+        private void CommenceHarmonyPatch()
         {
-            //Create a new instance of AccessoryPatch
+            //Create a new instance of the patches
             AccessoryPatch accessoryPatch = new AccessoryPatch(this);
+            SkinColorPatch skinColorPatch = new SkinColorPatch(this);
 
             //Tell the log I'm patching it, then patch it.
             Monitor.Log("Patching changeAccessory()", LogLevel.Trace);
             Harmony.Patch(
                 original: AccessTools.Method(typeof(Farmer), nameof(Farmer.changeAccessory)),
                 transpiler: new HarmonyMethod(accessoryPatch.GetType(), nameof(AccessoryPatch.ChangeAccessoryTranspiler))
+            );
+
+            //Patch the skin color length
+            Monitor.Log("Patching changeSkinColor()", LogLevel.Trace);
+            Harmony.Patch(
+                original: AccessTools.Method(typeof(Farmer), nameof(Farmer.changeSkinColor)),
+                transpiler: new HarmonyMethod(skinColorPatch.GetType(), nameof(SkinColorPatch.ChangeSkinColorTranspiler))
             );
         }
     }
