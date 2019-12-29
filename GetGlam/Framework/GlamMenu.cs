@@ -181,7 +181,6 @@ namespace GetGlam.Framework
             NewLeftButtonsList.Add(new ClickableTextureComponent("LeftNose", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 464, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
             NewLeftButtonsList.Add(new ClickableTextureComponent("LeftShoe", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 528, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
             NewLeftButtonsList.Add(new ClickableTextureComponent("LeftDresser", new Rectangle(this.xPositionOnScreen + this.width / 2 - 114, this.yPositionOnScreen + 200, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
-            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftHair", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 272, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
 
             //Add all the new right buttons to the list
             NewRightButtonsList.Add(new ClickableTextureComponent("RightBase", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 128, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
@@ -189,7 +188,13 @@ namespace GetGlam.Framework
             NewRightButtonsList.Add(new ClickableTextureComponent("RightNose", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 464, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
             NewRightButtonsList.Add(new ClickableTextureComponent("RightShoe", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 528, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
             NewRightButtonsList.Add(new ClickableTextureComponent("RightDresser", new Rectangle(this.xPositionOnScreen + this.width / 2 + 48, this.yPositionOnScreen + 200, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
-            NewRightButtonsList.Add(new ClickableTextureComponent("RightHair", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 272, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+
+            //Only add the new button if spacecore is installed an
+            if (Entry.IsSpaceCoreInstalled && PackHelper.NumberOfHairstlyesAdded > 355)
+            {
+                NewLeftButtonsList.Add(new ClickableTextureComponent("LeftHair", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 272, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
+                NewRightButtonsList.Add(new ClickableTextureComponent("RightHair", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 272, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+            }
 
             //Create buttons and add new labels to the list
             FavoriteMenuTab = new ClickableTextureComponent("FavoriteTab", new Rectangle(this.xPositionOnScreen - IClickableMenu.borderWidth - 8, this.yPositionOnScreen + 160, 64, 64), null, "FavoriteTab", Game1.mouseCursors, new Rectangle(656, 80, 16, 16), 4f, false);
@@ -217,9 +222,13 @@ namespace GetGlam.Framework
                     buttonComponent.bounds.Y -= 128;
                 }
 
-                //Disable the previous hair button
-                if (buttonComponent.name.Contains("Hair"))
-                    buttonComponent.visible = false;
+                //Only disable if space core is installed and the number of hairstyles add is greater then 355
+                if (Entry.IsSpaceCoreInstalled && PackHelper.NumberOfHairstlyesAdded > 355)
+                {
+                    //Disable the previous hair button
+                    if (buttonComponent.name.Contains("Hair"))
+                        buttonComponent.visible = false;
+                }
             }
 
             //Change the bounds in the already created right selection button list
@@ -236,9 +245,13 @@ namespace GetGlam.Framework
                     buttonComponent.bounds.Y -= 128;
                 }
 
-                //Disable the previous hair button
-                if (buttonComponent.name.Contains("Hair"))
-                    buttonComponent.visible = false;
+                //Only disable if space core is installed and the number of hairstyles add is greater then 355
+                if (Entry.IsSpaceCoreInstalled && PackHelper.NumberOfHairstlyesAdded > 355)
+                {
+                    //Disable the previous hair button
+                    if (buttonComponent.name.Contains("Hair"))
+                        buttonComponent.visible = false;
+                }
             }
 
             //Change the bounds and set color pickers for the labels
@@ -433,9 +446,6 @@ namespace GetGlam.Framework
             {
                 if (hairButton.containsPoint(x, y) && hairButton.name.Contains("Hair"))
                 {
-                    if (Game1.player.hair.Get().Equals(0))
-                        Game1.player.hair.Set(PackHelper.NumberOfHairstlyesAdded);
-
                     if (Game1.player.FarmerRenderer.textureName.Value.Contains("bald"))
                     {
                         IsBald = true;
@@ -746,12 +756,11 @@ namespace GetGlam.Framework
 
                 //Only draw the needed labels
                 if (component.name.Contains("Hair") && !component.name.Contains("Color"))
-                    Utility.drawTextWithShadow(b, Game1.player.hair.Value.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
+                    Utility.drawTextWithShadow(b, Game1.player.hair.Get().ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
                 else if (component.name.Contains("Acc"))
-                    Utility.drawTextWithShadow(b, Game1.player.accessory.Value == -1 ? "NA" : Game1.player.accessory.Value.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
+                    Utility.drawTextWithShadow(b, Game1.player.accessory.Get() == -1 ? "na" : Game1.player.accessory.Value.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
                 else if (component.name.Contains("Skin"))
-                    Utility.drawTextWithShadow(b, Game1.player.skin.Value.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
-
+                    Utility.drawTextWithShadow(b, Game1.player.skin.Get().ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
             }
 
             //Draw the eye color picker and hair color picker
