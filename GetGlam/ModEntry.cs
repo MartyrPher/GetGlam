@@ -57,7 +57,7 @@ namespace GetGlam
 
             //Check if SpaceCore is Installed
             IsSpaceCoreInstalled = Helper.ModRegistry.IsLoaded("spacechase0.SpaceCore");
-            Monitor.Log($"Space Core: {IsSpaceCoreInstalled}", LogLevel.Alert);
+            Monitor.Log($"Space Core: {IsSpaceCoreInstalled}", LogLevel.Trace);
 
             //if it's installed then register the extended tilesheets
             if (IsSpaceCoreInstalled)
