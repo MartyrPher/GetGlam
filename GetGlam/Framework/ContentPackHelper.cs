@@ -24,6 +24,9 @@ namespace GetGlam.Framework
         //List of Dresser Models
         public List<DresserModel> DresserList = new List<DresserModel>();
 
+        //List of Skin Color Models
+        public List<SkinColorModel> SkinColorList = new List<SkinColorModel>();
+
         //List of Female base textures
         public List<Texture2D> FemaleBaseTextureList = new List<Texture2D>();
 
@@ -100,12 +103,13 @@ namespace GetGlam.Framework
                 DirectoryInfo dresserDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Dresser"));
                 DirectoryInfo shoeDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Shoes"));
                 DirectoryInfo faceAndNoseDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "FaceAndNose"));
+                DirectoryInfo skinColorDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "SkinColor"));
 
                 //If the hair directory exists
                 if (hairDirectory.Exists)
                 {
                     //Create a new hair model
-                    HairModel hair = new HairModel();
+                    HairModel hair = contentPack.ReadJsonFile<HairModel>("Hairstyles/hairstyles.json");
 
                     //Set the vars in the hair model
                     hair.Texture = contentPack.LoadAsset<Texture2D>("Hairstyles/hairstyles.png");
@@ -208,6 +212,21 @@ namespace GetGlam.Framework
                     //Add it to the Dictionary
                     MaleFaceAndNoseTextureDict.Add(MaleBaseTextureList[MaleBaseTextureList.Count - 1], currentPackMaleFaceNoseDict);
                     FemaleFaceAndNoseTextureDict.Add(FemaleBaseTextureList[FemaleBaseTextureList.Count - 1], currentPackFemaleFaceNoseDict);
+                }
+
+                //If the skin color directory exists
+                if (skinColorDirectory.Exists)
+                {
+                    //Create a new skin color model
+                    SkinColorModel model = new SkinColorModel();
+
+                    //Set the model info
+                    model.Texture = contentPack.LoadAsset<Texture2D>(Path.Combine("SkinColor", "skinColors.png"));
+                    model.TextureHeight = model.Texture.Height;
+                    model.ModName = contentPack.Manifest.Name;
+
+                    //Add the model to the list
+                    SkinColorList.Add(model);
                 }
             }
 
