@@ -81,6 +81,9 @@ namespace GetGlam.Framework
         //Whether the player is bald
         public bool IsBald = false;
 
+        //Number of hairstyles added by content packs including default hairs
+        public int NumberOfHairstlyesAdded = 56;
+
         /// <summary>ContentPackHelpers Contructor</summary>
         /// <param name="entry">An instance of <see cref="ModEntry"/></param>
         public ContentPackHelper(ModEntry entry)
@@ -115,6 +118,7 @@ namespace GetGlam.Framework
                     hair.Texture = contentPack.LoadAsset<Texture2D>("Hairstyles/hairstyles.png");
                     hair.TextureHeight = hair.Texture.Height;
                     hair.ModName = contentPack.Manifest.Name;
+                    NumberOfHairstlyesAdded += hair.NumberOfHairstyles;
 
                     //Add the hair model to the list
                     HairList.Add(hair);
@@ -124,7 +128,7 @@ namespace GetGlam.Framework
                 if (accessoriesDirectory.Exists)
                 {
                     //Create the new accessory model
-                    AccessoryModel accessory = new AccessoryModel();
+                    AccessoryModel accessory = contentPack.ReadJsonFile<AccessoryModel>("Accessories/accessories.json");
 
                     //Set the vars in the accessory model
                     accessory.Texture = contentPack.LoadAsset<Texture2D>("Accessories/accessories.png");
