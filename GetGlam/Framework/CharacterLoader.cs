@@ -132,7 +132,7 @@ namespace GetGlam.Framework
 
             //Change the base
             PackHelper.ChangePlayerBase(configModel.IsMale, configModel.BaseIndex, configModel.FaceIndex, configModel.NoseIndex, configModel.ShoesIndex, configModel.IsBald);
-            Entry.Helper.Reflection.GetField<Texture2D>(farmer.FarmerRenderer, "baseTexture").SetValue(PackHelper.LoadPlayerBase());
+            //Entry.Helper.Reflection.GetField<Texture2D>(farmer.FarmerRenderer, "baseTexture").SetValue(PackHelper.LoadPlayerBase());
         }
 
         /// <summary>Loads a favorite from the favorite list</summary>
