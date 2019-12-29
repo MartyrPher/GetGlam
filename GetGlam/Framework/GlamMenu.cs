@@ -53,6 +53,9 @@ namespace GetGlam.Framework
         //Tab Button the Glam Menu
         private ClickableTextureComponent GlamMenuTab;
 
+        //Cancel button
+        private ClickableTextureComponent CancelButton;
+
         //Whether the button is selected
         private bool IsHatFixSelected = false;
 
@@ -136,7 +139,6 @@ namespace GetGlam.Framework
         /// <summary>Takes a snapshot of the farmer when opening favorites/glam menu</summary>
         public void TakeSnapshot()
         {
-            Entry.Monitor.Log("Taking a Snapshot", StardewModdingAPI.LogLevel.Alert);
             FarmerSnapshot[0] = Game1.player.isMale ? 0 : 1;
             FarmerSnapshot[1] = BaseIndex;
             FarmerSnapshot[2] = Game1.player.skin.Get();
@@ -154,8 +156,6 @@ namespace GetGlam.Framework
         /// <summary>Restores a snapshot that was taken</summary>
         public void RestoreSnapshot()
         {
-            Entry.Monitor.Log("Restoring snapshot", StardewModdingAPI.LogLevel.Alert);
-
             Game1.player.changeGender(FarmerSnapshot[0] == 0 ? true : false);
             Game1.player.changeSkinColor(FarmerSnapshot[2]);
             Game1.player.changeHairStyle(FarmerSnapshot[3]);
@@ -290,6 +290,9 @@ namespace GetGlam.Framework
             //Change the bounds on the ok button
             this.okButton.bounds.Y += 8;
             this.okButton.bounds.X += 8;
+
+            //Create the cancel button
+            CancelButton = new ClickableTextureComponent("Cancel", new Rectangle(this.okButton.bounds.X - 74, this.okButton.bounds.Y, 64, 64), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47, -1, -1), 1f, false);
         }
 
         /// <summary>Override to change the menu when the window size changes</summary>
@@ -345,6 +348,11 @@ namespace GetGlam.Framework
                 AddToFavoritesButton.scale = Math.Min(AddToFavoritesButton.scale + 0.05f, AddToFavoritesButton.baseScale + 0.5f);
             else
                 AddToFavoritesButton.scale = Math.Max(AddToFavoritesButton.scale - 0.05f, AddToFavoritesButton.baseScale);
+
+            if (CancelButton.containsPoint(x, y))
+                CancelButton.scale = Math.Min(CancelButton.scale + 0.05f, CancelButton.baseScale + 0.1f);
+            else
+                CancelButton.scale = Math.Max(CancelButton.scale - 0.05f, CancelButton.baseScale);
         }
 
         /// <summary>Override that handles recieving a left click</summary>
@@ -468,6 +476,19 @@ namespace GetGlam.Framework
             //Check the okbutton again to save the player when the menu closes
             if (this.okButton.containsPoint(x, y))
                 PlayerLoader.SaveCharacterLayout(Game1.player.isMale, BaseIndex, Game1.player.skin.Value, Game1.player.hair.Value, FaceIndex, NoseIndex, ShoeIndex, Game1.player.accessory.Value, DresserIndex, IsBald);
+
+            //Check if the cancel button was clicked
+            if (CancelButton.containsPoint(x, y))
+            {
+                RestoreSnapshot();
+                Game1.activeClickableMenu = null;
+                if (CancelButton.scale != 0f)
+                {
+                    CancelButton.scale -= 0.25f;
+                    CancelButton.scale = Math.Max(0.75f, CancelButton.scale);
+                }
+                Game1.playSound("bigDeSelect");
+            }
         }
 
         /// <summary>Update the buttons for changing the face and nose.</summary>
@@ -784,8 +805,9 @@ namespace GetGlam.Framework
                     b.Draw(Game1.mouseCursors, component.bounds, new Rectangle?(Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 34, -1, -1)), Color.White);
             }
 
-            //Draw the ok button
+            //Draw the ok button and cancel button
             this.okButton.draw(b);
+            CancelButton.draw(b);
 
             //Lastly, draw the mouse if they're not using the hardware cursor
             if (Game1.activeClickableMenu == this && !Game1.options.hardwareCursor)

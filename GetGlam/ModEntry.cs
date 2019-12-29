@@ -145,6 +145,9 @@ namespace GetGlam
             //Check if the button is the Menu key and their is no menu
             if (e.Button.Equals(Config.OpenGlamMenuKey) && Game1.activeClickableMenu is null)
             {
+                //Take a Snapshot
+                Menu.TakeSnapshot();
+
                 //Change player direction and open the menu
                 Game1.player.faceDirection(2);
                 Game1.player.FarmerSprite.StopAnimation();
