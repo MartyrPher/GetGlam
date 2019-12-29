@@ -91,14 +91,15 @@ namespace GetGlam.Framework
             //Create each of the star buttons for the menu and apply the padding
             for (int i = 0; i < 40; i++)
             {
-                StarComponents.Add(new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + StarPaddingX, this.yPositionOnScreen + this.height / 2 + StarPaddingY, 24, 24), Game1.mouseCursors, new Rectangle(346, 400, 8, 8), 4f));
-
-                StarPaddingX += 64;
                 if (i % 10 == 0 && i != 0)
                 {
                     StarPaddingX = 48;
                     StarPaddingY += 48;
                 }
+
+                StarComponents.Add(new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen + StarPaddingX, this.yPositionOnScreen + this.height / 2 + StarPaddingY, 24, 24), Game1.mouseCursors, new Rectangle(346, 400, 8, 8), 4f));
+
+                StarPaddingX += 64;
             }
 
             //Update the star button sprites
