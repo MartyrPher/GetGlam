@@ -223,7 +223,7 @@ namespace GetGlam.Framework
                     for (int i = 0; i < 40; i++)
                         model.Favorites.Add(new FavoriteModel());
 
-                    Entry.Monitor.Log("Creating a new save json.", LogLevel.Alert);
+                    Entry.Monitor.Log("Creating a new save json.", LogLevel.Debug);
                     Entry.Helper.Data.WriteJsonFile<ConfigModel>(localConfigPath, model);
                 }
                 //Add the save folder names to the model and add it to the config dictionary
