@@ -22,11 +22,11 @@ namespace GetGlam.Framework
         //The width of where to put the hair in the asset
         private int HairTextureWidth = 0;
 
-        //The AccessoryTexture starting Y, default: 96
-        private static int AccessoryTextureHeight = 96;
+        //The AccessoryTexture starting Y, default: 64
+        private static int AccessoryTextureHeight = 64;
 
-        //The AccessoryTextures starting X, default: 0
-        private int AccessoryTextureWidth = 0;
+        //The AccessoryTextures starting X, default: 48
+        private int AccessoryTextureWidth = 48;
 
         //The skin color starting Y, default: 24
         private static int SkinColorTextureHeight = 24;
@@ -124,7 +124,8 @@ namespace GetGlam.Framework
                 }
 
                 //Cut the blank image from the image
-                //CutEmptyImage(asset, HairTextureHeight, 4096);
+                if (!Entry.IsSpaceCoreInstalled || PackHelper.NumberOfHairstlyesAdded < 355)
+                    CutEmptyImage(asset, HairTextureHeight, 128);
             }
 
             //If the asset is accessories
