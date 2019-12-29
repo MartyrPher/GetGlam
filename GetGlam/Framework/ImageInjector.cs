@@ -22,8 +22,11 @@ namespace GetGlam.Framework
         //The width of where to put the hair in the asset
         private int HairTextureWidth = 0;
 
-        //The AccessoryTexture starting X, default: 96
+        //The AccessoryTexture starting Y, default: 96
         private static int AccessoryTextureHeight = 96;
+
+        //The AccessoryTextures starting X, default: 0
+        private int AccessoryTextureWidth = 0;
 
         //The skin color starting Y, default: 24
         private static int SkinColorTextureHeight = 24;
@@ -110,7 +113,7 @@ namespace GetGlam.Framework
                             hairTextureX += 16;
 
                         //Change where to put the hair on the asset
-                        if (HairTextureWidth + 16 == 128)
+                        if (HairTextureWidth + 16 >= 128)
                         {
                             HairTextureWidth = 0;
                             HairTextureHeight += 96;
@@ -121,7 +124,7 @@ namespace GetGlam.Framework
                 }
 
                 //Cut the blank image from the image
-                //CutEmptyImage(asset, HairTextureHeight, 128);
+                //CutEmptyImage(asset, HairTextureHeight, 4096);
             }
 
             //If the asset is accessories
@@ -136,15 +139,39 @@ namespace GetGlam.Framework
                 //Loop through each accessory loaded and extend the image
                 foreach (var accessory in PackHelper.AccessoryList)
                 {
-                    if ((accessory.TextureHeight + AccessoryTextureHeight) > 4096)
-                    {
-                        Entry.Monitor.Log($"{accessory.ModName} accessories cannot be added to the game, the texture is too big.", LogLevel.Warn);
-                        return;
-                    }
+                    //Ints to run throught the current hairstyles.png to find each hairstyle within the png
+                    int accessoryTextureX = 0;
+                    int accessoryTextureY = 0;
 
-                    //Patch the accessory texture and change the accessory texture height
-                    asset.AsImage().PatchImage(accessory.Texture, null, new Rectangle(0, AccessoryTextureHeight, 128, accessory.Texture.Height));
-                    AccessoryTextureHeight += accessory.TextureHeight;
+                    for (int i = 0; i < accessory.NumberOfAccessories; i++)
+                    {
+                        if ((AccessoryTextureHeight + 96) >= 4096)
+                        {
+                            Entry.Monitor.Log($"{accessory.ModName} accessories cannot be added to the game, the texture is too big.", LogLevel.Error);
+                            return;
+                        }
+
+                        //Patch the hair texture and change the hair texture height
+                        asset.AsImage().PatchImage(accessory.Texture, new Rectangle(accessoryTextureX, accessoryTextureY, 16, 32), new Rectangle(AccessoryTextureWidth, AccessoryTextureHeight, 16, 32));
+
+                        //Change which accessory is being added from the source texture
+                        if (accessoryTextureX + 16 == 128)
+                        {
+                            accessoryTextureX = 0;
+                            accessoryTextureX += 32;
+                        }
+                        else
+                            accessoryTextureX += 16;
+
+                        //Change where to put the accessory on the asset
+                        if (AccessoryTextureWidth + 16 == 128)
+                        {
+                            AccessoryTextureWidth = 0;
+                            AccessoryTextureHeight += 32;
+                        }
+                        else
+                            AccessoryTextureWidth += 16;
+                    }
                 }
 
                 //Cut the blank image from the image
