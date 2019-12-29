@@ -44,6 +44,15 @@ namespace GetGlam.Framework
         //Label for the Hait Hair Fix
         private ClickableComponent HatFixLabel;
 
+        //Button to save a layout to the favorites
+        private ClickableTextureComponent AddToFavoritesButton;
+
+        //Tab Button for the favorite menu
+        private ClickableTextureComponent FavoriteMenuTab;
+
+        //Tab Button the Glam Menu
+        private ClickableTextureComponent GlamMenuTab;
+
         //Whether the button is selected
         private bool IsHatFixSelected = false;
 
@@ -64,6 +73,15 @@ namespace GetGlam.Framework
 
         //Whether the player is bald
         private bool IsBald = false;
+
+        //Snapshot of the Farmer before making changes
+        private int[] FarmerSnapshot = new int[9] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+        //Snapshot of haircolor
+        private Color HairColorSnapshot;
+
+        //SnapShot of eyecolor
+        private Color EyeColorSnapshot;
 
         /// <summary>Glam Menu's Conrstructor</summary>
         /// <param name="entry">Instance of <see cref="ModEntry"/></param>
@@ -103,14 +121,50 @@ namespace GetGlam.Framework
         /// <param name="dresserIndex">The dresser index</param>
         /// <param name="isBald">Whether the player is bald</param>
         /// <remarks>This is only used when the player loads a layout from a json file</remarks>
-        public void UpdateIndexes(int baseindex, int faceIndex, int noseIndex, int shoeIndex, int dresserIndex, bool isBald)
+        public void UpdateIndexes(int baseindex, int faceIndex, int noseIndex, int shoeIndex, bool isBald, int dresserIndex = 1)
         {
             BaseIndex = baseindex;
             FaceIndex = faceIndex;
             NoseIndex = noseIndex;
             ShoeIndex = shoeIndex;
-            DresserIndex = dresserIndex;
             IsBald = isBald;
+
+            if (dresserIndex != 1)
+                DresserIndex = dresserIndex;
+        }
+
+        /// <summary>Takes a snapshot of the farmer when opening favorites/glam menu</summary>
+        public void TakeSnapshot()
+        {
+            Entry.Monitor.Log("Taking a Snapshot", StardewModdingAPI.LogLevel.Alert);
+            FarmerSnapshot[0] = Game1.player.isMale ? 0 : 1;
+            FarmerSnapshot[1] = BaseIndex;
+            FarmerSnapshot[2] = Game1.player.skin.Get();
+            FarmerSnapshot[3] = Game1.player.hair.Get();
+            FarmerSnapshot[4] = FaceIndex;
+            FarmerSnapshot[5] = NoseIndex;
+            FarmerSnapshot[6] = ShoeIndex;
+            FarmerSnapshot[7] = Game1.player.accessory.Get();
+            FarmerSnapshot[8] = IsBald ? 0 : 1;
+
+            HairColorSnapshot = Game1.player.hairstyleColor.Get();
+            EyeColorSnapshot = Game1.player.newEyeColor.Get();
+        }
+
+        /// <summary>Restores a snapshot that was taken</summary>
+        public void RestoreSnapshot()
+        {
+            Entry.Monitor.Log("Restoring snapshot", StardewModdingAPI.LogLevel.Alert);
+
+            Game1.player.changeGender(FarmerSnapshot[0] == 0 ? true : false);
+            Game1.player.changeSkinColor(FarmerSnapshot[2]);
+            Game1.player.changeHairStyle(FarmerSnapshot[3]);
+            Game1.player.changeAccessory(FarmerSnapshot[7]);
+
+            Game1.player.FarmerRenderer.recolorEyes(EyeColorSnapshot);
+            Game1.player.changeHairColor(HairColorSnapshot);
+
+            PackHelper.ChangePlayerBase(FarmerSnapshot[0] == 0 ? true : false, FarmerSnapshot[1], FarmerSnapshot[4], FarmerSnapshot[5], FarmerSnapshot[6], FarmerSnapshot[8] == 0 ? true : false);
         }
 
         /// <summary>Sets the position for all the UI elements in the menu</summary>
@@ -135,8 +189,11 @@ namespace GetGlam.Framework
             NewRightButtonsList.Add(new ClickableTextureComponent("RightShoe", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 528, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
             NewRightButtonsList.Add(new ClickableTextureComponent("RightDresser", new Rectangle(this.xPositionOnScreen + this.width / 2 + 48, this.yPositionOnScreen + 200, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
 
-            //Create hair fix button and add new labels to the list
+            //Create buttons and add new labels to the list
+            FavoriteMenuTab = new ClickableTextureComponent("FavoriteTab", new Rectangle(this.xPositionOnScreen - IClickableMenu.borderWidth - 8, this.yPositionOnScreen + 160, 64, 64), null, "FavoriteTab", Game1.mouseCursors, new Rectangle(656, 80, 16, 16), 4f, false);
+            GlamMenuTab = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen - IClickableMenu.borderWidth + 1, this.yPositionOnScreen + 96, 64, 64), Game1.mouseCursors, new Rectangle(672, 80, 15, 16), 4f, false);
             HatCoversHairButton = new ClickableTextureComponent("HatFix", new Rectangle(this.xPositionOnScreen + this.width / 2 - 114, this.yPositionOnScreen + 128, 36, 36), null, "Hat Hair Fix", Game1.mouseCursors, new Rectangle(227, 425, 9, 9), 4f, false);
+            AddToFavoritesButton = new ClickableTextureComponent("Favorite", new Rectangle(this.xPositionOnScreen + this.width - 128, this.yPositionOnScreen + 224, 48, 48), null, "Favorite", Game1.mouseCursors, new Rectangle(346, 392, 8, 8), 6f, false);
             NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[0].bounds.X + 70, NewLeftButtonsList[0].bounds.Y + 16, 1, 1), "Base", "Base"));
             NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[1].bounds.X + 70, NewLeftButtonsList[1].bounds.Y + 16, 1, 1), "Face", "Face"));
             NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[2].bounds.X + 70, NewLeftButtonsList[2].bounds.Y + 16, 1, 1), "Nose", "Nose"));
@@ -279,10 +336,15 @@ namespace GetGlam.Framework
             foreach (ClickableTextureComponent genderButton in this.genderButtons)
             {
                 if (genderButton.containsPoint(x, y))
-                    genderButton.scale = Math.Min(genderButton.scale + 0.05f, genderButton.baseScale + 0.5f);
+                    genderButton.scale = Math.Min(genderButton.scale + 0.05f, genderButton.baseScale + 0.1f);
                 else
-                    genderButton.scale = Math.Min(genderButton.scale - 0.05f, genderButton.baseScale);
+                    genderButton.scale = Math.Max(genderButton.scale - 0.05f, genderButton.baseScale);
             }
+
+            if (AddToFavoritesButton.containsPoint(x, y))
+                AddToFavoritesButton.scale = Math.Min(AddToFavoritesButton.scale + 0.05f, AddToFavoritesButton.baseScale + 0.5f);
+            else
+                AddToFavoritesButton.scale = Math.Max(AddToFavoritesButton.scale - 0.05f, AddToFavoritesButton.baseScale);
         }
 
         /// <summary>Override that handles recieving a left click</summary>
@@ -366,7 +428,7 @@ namespace GetGlam.Framework
                 }
             }
 
-            //Chech if the right Hair style button is pressed, used to calculate baldness
+            //Check if the right Hair style button is pressed, used to calculate baldness
             foreach (ClickableTextureComponent hairButton in this.rightSelectionButtons)
             {
                 if (hairButton.containsPoint(x, y) && hairButton.name.Contains("Hair"))
@@ -382,6 +444,25 @@ namespace GetGlam.Framework
                         PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     }
                 }
+            }
+
+            //Check if the add to favorites button was clicked
+            if (AddToFavoritesButton.containsPoint(x, y))
+            {
+                PlayerLoader.SaveFavoriteToList(Game1.player.isMale, BaseIndex, Game1.player.skin.Get(), Game1.player.hair.Get(), FaceIndex, NoseIndex, ShoeIndex, Game1.player.accessory.Get(), IsBald);
+                if (AddToFavoritesButton.scale != 0f)
+                {
+                    AddToFavoritesButton.scale -= 0.25f;
+                    AddToFavoritesButton.scale = Math.Max(0.75f, AddToFavoritesButton.scale);
+                }
+                Game1.playSound("coin");
+            }
+
+            //Take a snapshot of the farmer and open the favorites menu
+            if (FavoriteMenuTab.containsPoint(x, y))
+            {
+                TakeSnapshot();
+                Game1.activeClickableMenu = new FavoriteMenu(Entry, PlayerLoader, this);
             }
 
             //Check the okbutton again to save the player when the menu closes
@@ -546,6 +627,10 @@ namespace GetGlam.Framework
             //Draw the dialogue box or else Minerva will haunt my dreams
             Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true);
 
+            //Draw the tabs
+            FavoriteMenuTab.draw(b);
+            GlamMenuTab.draw(b);
+
             //Draw the Dresser Texture if the Config is true
             if (Config.DrawDresserInMenu)
                 b.Draw(Dresser.Texture, new Vector2(this.xPositionOnScreen + this.width / 2 - 96, this.yPositionOnScreen + this.height / 2 - 80), Dresser.TextureSourceRect, Color.White, 0f, Vector2.Zero, 12f, SpriteEffects.None, 0.86f);
@@ -579,6 +664,9 @@ namespace GetGlam.Framework
                 shouldDrawNosesAndFaceButtons = false;
                 UpdateFaceAndNoseButtonsPositions(shouldDrawNosesAndFaceButtons);
             }
+
+            //Draw the add to favorites button
+            AddToFavoritesButton.draw(b);
 
             //Draw each of the left selection buttons
             foreach (ClickableTextureComponent component in this.leftSelectionButtons)
