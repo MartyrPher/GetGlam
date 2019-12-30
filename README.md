@@ -34,7 +34,7 @@ option                 | purpose
 
 ## Features
 ### Overview
-Get Glam is an rewritten GetDressed/Kisekae for Stardew Valley 1.4.
+Get Glam is a rewritten GetDressed/Kisekae for Stardew Valley 1.4.
 The base mod includes the dresser and all the face and nose options from Get Dressed.
 This mod differs from previous iterations since it adds content pack support.
 
@@ -53,6 +53,7 @@ Each of these subfolders will contain `.png` images and one `.json` in the `Face
 The player can wear accessories including facial hair and earnings, all contained within one image.
 
 Accessory Size: 16 x 32
+
 SpriteSheet Size: 128 x Number of accesories added
 
 To add accessories to a content pack you need to:
@@ -85,6 +86,7 @@ Currently, Get Glam only supports one `farmer_base.png`, `farmer_girl_base.png`,
 The dresser comes as the default from Get Dressed/Kisekae and can be changed with content packs.
 
 Dresser Size: 16 x 32
+
 SpriteSheet Size: 16 x Number of dressers added
 
 To add dressers to a content pack you need to:
@@ -115,6 +117,7 @@ field			      | purpose
 The player can change their hairstyle, all contained within one image.
 
 Hairstyle Size: 16 x 96
+
 Spritesheet Size: 128 x Number of hairstyles added
 
 To add hair to a content pack you need to:
@@ -141,6 +144,7 @@ To add shoes to a content pack you need to:
 The player can change their skin color to different colors provided by content packs.
 
 Skin Color Size: 3 x 1
+
 Spritesheet Size: 3 x Number of skin colors
 
 To add skin colors to a content pack you need to:
