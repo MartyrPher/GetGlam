@@ -76,6 +76,10 @@ namespace GetGlam.Framework
             //If the asset is hairstyles
             if (asset.AssetNameEquals("Characters\\Farmer\\hairstyles"))
             {
+                //Don't edit if they have no hair content packs
+                if (PackHelper.NumberOfHairstlyesAdded == 56)
+                    return;
+
                 //Create a new texture and set it as the old one
                 Texture2D oldTexture = asset.AsImage().Data;
                 Texture2D newTexture = new Texture2D(Game1.graphics.GraphicsDevice, oldTexture.Width, Math.Max(oldTexture.Height, 4096));

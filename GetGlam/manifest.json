@@ -1,12 +1,12 @@
 ﻿{
   "Name": "Get Glam",
   "Author": "MartyrPher",
-  "Version": "1.0.0-beta2",
+  "Version": "1.0.1",
   "MinimumApiVersion": "3.0",
   "Description": "Stardew Valley Gets Glam.",
   "UniqueID": "MartyrPher.GetGlam",
   "EntryDll": "GetGlam.dll",
-  "UpdateKeys": [ "Nexus: null" ],
+  "UpdateKeys": [ "Nexus: 5044" ],
   "Dependencies": [
     {
       "UniqueID": "spacechase0.SpaceCore",
