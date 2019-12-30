@@ -12,12 +12,13 @@ Get Glam is a Stardew Valley mod that allows different player customizations to 
 	* [Faces and Noses](#faceandnose)
 	* [Hairstyles](#hairstyles)
 	* [Shoes](#shoes)
+	* [Skin Colors](#skincolor)
 * [Todo](#todo)
 
 ## Install
 1. [Install the latest version of SMAPI](https://smapi.io/).
-2. Install the mod from [Nexus]("Nexus").
-3. Unzip any Get Glam content packs into the `Mods` folder to intstall them.
+2. Install the mod from [Nexus](https://www.nexusmods.com/stardewvalley/mods/5044).
+3. Unzip any Get Glam content packs into the `Mods` folder to install them.
 4. Run the game using SMAPI.
 
 ## Config
@@ -37,27 +38,38 @@ Get Glam is an rewritten GetDressed/Kisekae for Stardew Valley 1.4.
 The base mod includes the dresser and all the face and nose options from Get Dressed.
 This mod differs from previous iterations since it adds content pack support.
 
-There are six folders that you are likely to see when downloading a Get Glam content pack:
+There are seven folders that you are likely to see when downloading a Get Glam content pack:
 * Accessories
 * Base
 * Dresser
 * FaceAndNose
 * Hairstyles
 * Shoes
+* SkinColors
 
 Each of these subfolders will contain `.png` images and one `.json` in the `FaceAndNose` folder.
 
 ### Accessories
 The player can wear accessories including facial hair and earnings, all contained within one image.
 
+Accessory Size: 16 x 32
+SpriteSheet Size: 128 x Number of accesories added
+
 To add accessories to a content pack you need to:
 * Create a folder in the pack named `Accessories`.
-* Add in the custom image named `accessories.png` to the newly created `Accessories` folder. Size: 128xNumberOfAccessories
+* Add in the custom image named `accessories.png` to the newly created `Accessories` folder. 
+* Add in a `accessories.json` with one field.
 
-Currently, Get Glam only supports one `accessories.png` per content pack.
+field			      | purpose
+----------------------|--------
+`NumberOfAccessories` | The number of accessories added by the content pack.
+
+All accessories need to be added to the same `accessories.png`, Get Glam only supports one `accessories.png`.
 
 ### Bases
 The player can swap between farmer bases that content packs provide.
+
+Size: 288 x 672
 
 To add a base to a content pack you need to:
 * Create a folder in the pack named `Base`.
@@ -72,18 +84,23 @@ Currently, Get Glam only supports one `farmer_base.png`, `farmer_girl_base.png`,
 ### Dresser
 The dresser comes as the default from Get Dressed/Kisekae and can be changed with content packs.
 
+Dresser Size: 16 x 32
+SpriteSheet Size: 16 x Number of dressers added
+
 To add dressers to a content pack you need to:
 * Create a folder in the pack named `Dresser`.
-* Add in the custom dresser image `dresser.png` to the newly created `Dresser` folder. Dresser Size: 16x32, `dresser.png` Size: 16xNumberOfDressers
+* Add in the custom dresser image `dresser.png` to the newly created `Dresser` folder.
 
-Currently, Get Glam only supports one `dresser.png` per content pack.
+All dressers need to be added to the same `dressers.png`, Get Glam only supports one `dressers.png`.
 
 ### Faces and Noses
 Get Glam adds the option for the farmer to be able to swap between faces and noses for a particular base.
 
+Size: 96 x 672
+
 To add faces and noses for your base, you need to:
 * Create a folder in the pack named `FaceAndNose`.
-* Add in the custom face and nose images `"gender"_face"FaceNumber"_nose"NoseNumber".png` to the `FaceAndNose` folder. Size: 96x672
+* Add in the custom face and nose images `"gender"_face"FaceNumber"_nose"NoseNumber".png` to the `FaceAndNose` folder.
 * The naming convention for the Face and Nose number need to be sequential. Ex: First face and nose needs to be named `male_face0_nose0.png`, second `male_face0_nose1.png`...and so on.
 * Add in a `count.json` to the `FaceAndNose` folder.
 
@@ -97,22 +114,41 @@ field			      | purpose
 ### Hairstyles
 The player can change their hairstyle, all contained within one image.
 
+Hairstyle Size: 16 x 96
+Spritesheet Size: 128 x Number of hairstyles added
+
 To add hair to a content pack you need to:
 * Create a folder in the pack named `Hairstyles`.
-* Add in the custom image named `hairstyles.png` to the newly created `Hairstyles` folder. Size:128xNumberOfHairstyles
+* Add in the custom image named `hairstyles.png` to the newly created `Hairstyles` folder.
+* Add in a `hairstyles.json` with one field.
 
-Currently, Get Glam only supports one `hairstyles.png` per content pack.
+field			      | purpose
+----------------------|--------
+`NumberOfHairstyles`  | The number of hairstyles added by the content pack.
+
+All hairstyles need to be added to the same `hairstyles.png`, Get Glam only supports one `hairstyles.png`.
 
 ### Shoes
 The player can change their shoes for any base provided with content packs.
 
+Size: 92 x 672
+
 To add shoes to a content pack you need to:
 * Create a folder in the pack named `Shoes`.
-* Add in the custom images named `"gender"_shoes{ShoeNumber}.png` to the newly created `Shoes` folder. Size: 92x672
+* Add in the custom images named `"gender"_shoes{ShoeNumber}.png` to the newly created `Shoes` folder.
+
+### Skin Color
+The player can change their skin color to different colors provided by content packs.
+
+Skin Color Size: 3 x 1
+Spritesheet Size: 3 x Number of skin colors
+
+To add skin colors to a content pack you need to:
+* Create a folder in the pack named `SkinColor`.
+* Add in the custom image name `skinColors.png` to the newly created `SkinColor` folder.
+
+All skin colors need to be added to the same `skinColors.png`. Get Glam only supports one `skinColors.png`.
 
 ## TODO
-* Update the load save screen with the new player custimizations.
-* Add in favorites so players can swap between different players.
-* Add in support for changing arms.
-* Add in support for adding skintones.
 * Make the dresser JA compatible for easy moving.
+* Fix bugs.
