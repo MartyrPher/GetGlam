@@ -78,7 +78,7 @@ namespace GetGlam.Framework
         private bool IsBald = false;
 
         //Snapshot of the Farmer before making changes
-        private int[] FarmerSnapshot = new int[9] {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        private int[] FarmerSnapshot = new int[9] {0, 0, 0, 0, 0, 0, 0, 0, 1};
 
         //Snapshot of haircolor
         private Color HairColorSnapshot;
@@ -161,6 +161,7 @@ namespace GetGlam.Framework
             Game1.player.hair.Set(FarmerSnapshot[3]);
             Game1.player.changeAccessory(FarmerSnapshot[7]);
 
+            Game1.player.newEyeColor.Set(EyeColorSnapshot);
             Game1.player.FarmerRenderer.recolorEyes(EyeColorSnapshot);
             Game1.player.changeHairColor(HairColorSnapshot);
 
