@@ -48,7 +48,7 @@ There are seven folders that you are likely to see when downloading a Get Glam c
 * Shoes
 * SkinColors
 
-Each of these subfolders will contain `.png` images and one `.json` in the `FaceAndNose` folder.
+Each of these subfolders will contain `.png` image(s) and a `.json` in the `Hairstyles`, `Accessories` and `FaceAndNose` folder.
 
 ### Accessories
 The player can wear accessories including facial hair and earnings, all contained within one image.
@@ -66,7 +66,9 @@ field			      | purpose
 ----------------------|--------
 `NumberOfAccessories` | The number of accessories added by the content pack.
 
-All accessories need to be added to the same `accessories.png`, Get Glam only supports one `accessories.png`.
+All accessories need to be added to the same `accessories.png`, Get Glam only supports one `accessories.png` per content pack.
+
+Note: Get Glam can add up to 1024 accessories including default accessories from different Get Glam content packs.
 
 ### Bases
 The player can swap between farmer bases that content packs provide.
@@ -94,7 +96,9 @@ To add dressers to a content pack you need to:
 * Create a folder in the pack named `Dresser`.
 * Add in the custom dresser image `dresser.png` to the newly created `Dresser` folder.
 
-All dressers need to be added to the same `dressers.png`, Get Glam only supports one `dressers.png`.
+All dressers need to be added to the same `dressers.png`, Get Glam only supports one `dressers.png` per content pack.
+
+Note: Get Glam can add up to 128 dressers including the default dresser from different Get Glam content packs.
 
 ### Faces and Noses
 Get Glam adds the option for the farmer to be able to swap between faces and noses for a particular base.
@@ -130,7 +134,9 @@ field			      | purpose
 ----------------------|--------
 `NumberOfHairstyles`  | The number of hairstyles added by the content pack.
 
-All hairstyles need to be added to the same `hairstyles.png`, Get Glam only supports one `hairstyles.png`.
+All hairstyles need to be added to the same `hairstyles.png`, Get Glam only supports one `hairstyles.png` per content pack.
+
+Note: Get Glam can add up to 336 hairstyles including default hairstyles from different Get Glam content packs. SpaceCore can make it unlimited.
 
 ### Shoes
 The player can change their shoes for any base provided with content packs.
@@ -152,7 +158,9 @@ To add skin colors to a content pack you need to:
 * Create a folder in the pack named `SkinColor`.
 * Add in the custom image name `skinColors.png` to the newly created `SkinColor` folder.
 
-All skin colors need to be added to the same `skinColors.png`. Get Glam only supports one `skinColors.png`.
+All skin colors need to be added to the same `skinColors.png`. Get Glam only supports one `skinColors.png` per content pack.
+
+Note: Get Glam can add up to 4096 skin colors including default skin colors from different Get Glam content packs.
 
 ## TODO
 * Make the dresser JA compatible for easy moving.
