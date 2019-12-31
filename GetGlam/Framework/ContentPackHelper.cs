@@ -84,6 +84,9 @@ namespace GetGlam.Framework
         //Number of hairstyles added by content packs including default hairs
         public int NumberOfHairstlyesAdded = 56;
 
+        //Number of accessories added by content packs including default accessories
+        public static int NumberOfAccessoriesAdded = 19;
+
         /// <summary>ContentPackHelpers Contructor</summary>
         /// <param name="entry">An instance of <see cref="ModEntry"/></param>
         public ContentPackHelper(ModEntry entry)
@@ -134,6 +137,7 @@ namespace GetGlam.Framework
                     accessory.Texture = contentPack.LoadAsset<Texture2D>("Accessories/accessories.png");
                     accessory.TextureHeight = accessory.Texture.Height;
                     accessory.ModName = contentPack.Manifest.Name;
+                    NumberOfAccessoriesAdded += accessory.NumberOfAccessories;
 
                     //Add the accessory to the accessory list
                     AccessoryList.Add(accessory);
