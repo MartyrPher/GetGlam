@@ -50,8 +50,11 @@ namespace GetGlam.Framework
         /// <summary>Places the dresser inside of the Farmhouse</summary> 
         public void PlaceDresser()
         {
+            if (!Config.PatchDresserInFarmHouse)
+                return;
+
             //Create the new Tilesheet
-            TileSheet dresserTilesheet = new TileSheet("Dresser", FarmHouse.map, $"Mods/{Entry.ModManifest.UniqueID}/dresser.png", new Size(1, Texture.Height / 16), new Size(16, 16));
+            TileSheet dresserTilesheet = new TileSheet("z_Dresser", FarmHouse.map, $"Mods/{Entry.ModManifest.UniqueID}/dresser.png", new Size(1, Texture.Height / 16), new Size(16, 16));
 
             //Get the dresser position
             DresserPosition = GetDresserPosition();
@@ -65,20 +68,21 @@ namespace GetGlam.Framework
 
             //Grab the building layer from the farmhouse map
             Layer buildingLayer = FarmHouse.map.GetLayer("Buildings");
+            Layer frontLayer = FarmHouse.map.GetLayer("Front");
 
             //Wrap in try..catch in case the user removes the dresser texture
             try
             {
                 //Set the Tiles to the new tiles
                 buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y + 1] = new StaticTile(buildingLayer, dresserTilesheet, BlendMode.Alpha, DresserTileSheetPoint.X);
-                buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(buildingLayer, dresserTilesheet, BlendMode.Alpha, DresserTileSheetPoint.Y);
+                buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(frontLayer, dresserTilesheet, BlendMode.Alpha, DresserTileSheetPoint.Y);
             }
             catch (Exception ex)
             {
                 //Print an error and set it to the default dresser
                 Entry.Monitor.Log("Could not find the dresser in the TileSheet, setting the dresser to default.", LogLevel.Warn);
                 buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y + 1] = new StaticTile(buildingLayer, dresserTilesheet, BlendMode.Alpha, 1);
-                buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(buildingLayer, dresserTilesheet, BlendMode.Alpha, 0);
+                buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(frontLayer, dresserTilesheet, BlendMode.Alpha, 0);
                 TextureSourceRect.Y = 0;
             }
 
@@ -89,16 +93,20 @@ namespace GetGlam.Framework
         /// <summary>Updates the dresser in the farmhouse when switching dressers in the Glam Menu</summary>
         public void UpdateDresserInFarmHouse()
         {
+            if (!Config.PatchDresserInFarmHouse)
+                return;
+
             //Grab the tilesheet from the farmhouse and Load it
             TileSheet dresserTileSheet = FarmHouse.map.GetTileSheet("Dresser");
             FarmHouse.map.LoadTileSheets(Game1.mapDisplayDevice);
 
-            //Garb the building layer from the farmhouse map
+            //Grab the building layer and Front layer from the farmhouse map
             Layer buildingLayer = FarmHouse.map.GetLayer("Buildings");
+            Layer frontLayer = FarmHouse.map.GetLayer("Front");
 
             //Set the new tiles to the new tiles
             buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y + 1] = new StaticTile(buildingLayer, dresserTileSheet, BlendMode.Alpha, DresserTileSheetPoint.X);
-            buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(buildingLayer, dresserTileSheet, BlendMode.Alpha, DresserTileSheetPoint.Y);
+            buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(frontLayer, dresserTileSheet, BlendMode.Alpha, DresserTileSheetPoint.Y);
 
             //Update the farmhouse map
             FarmHouse.updateMap();
@@ -132,6 +140,9 @@ namespace GetGlam.Framework
             //Check if they are in the Farmhouse, they're free, they clicked the right button and the menu is null
             if (Game1.player.currentLocation == FarmHouse && Context.IsPlayerFree && Game1.player.GetGrabTile() == new Vector2(DresserPosition.X, DresserPosition.Y + 1) && IsActionButton(button) && Game1.activeClickableMenu == null)
             {
+                //Take a snapshot of the player
+                Menu.TakeSnapshot();
+
                 //Change the player direction and stop whatever they were doing, set the menu
                 Game1.player.faceDirection(2);
                 Game1.player.FarmerSprite.StopAnimation();
@@ -154,7 +165,7 @@ namespace GetGlam.Framework
                 switch ((this.FarmHouse as FarmHouse).upgradeLevel)
                 {
                     case 0:
-                        newPosition = new Point(10, 2);
+                        newPosition = new Point(Config.StoveInCorner ? 7 : 10, 2);
                         break;
                     case 1:
                         newPosition = new Point(Game1.player.isMarried() ? 25 : 28, 2);
