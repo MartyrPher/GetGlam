@@ -24,13 +24,14 @@ Get Glam is a Stardew Valley mod that allows different player customizations to 
 ## Config
 Get Glam has a config that allows different options to be changed, the options include:
 
-option                 | purpose
------------------------|--------
-`OpenGlamMenuKey`      | Default: `C`. Description: The key used to open the custimization menu.
-`NewHatsIgnoreHair`    | Default: `false`. Decription: Any new hats acquired automatically ignore the hairstyle.
-`DresserTableLocationX`| Default: `0`. Description: Change the X coordinate of the dresser in the Farmhouse.
-`DresserTableLocationY`| Default: `0`. Description: Chnage the Y coordinate of the dresser in the Farmhouse.
-`DrawDresserInMenu`    | Default: `true`. Description: Draws the dresser image behind the player in the Glam Menu.
+option                    | purpose
+--------------------------|--------
+`OpenGlamMenuKey`         | Default: `C`. Description: The key used to open the custimization menu.
+`NewHatsIgnoreHair`       | Default: `false`. Decription: Any new hats acquired automatically ignore the hairstyle.
+`DresserTableLocationX`   | Default: `0`. Description: Change the X coordinate of the dresser in the Farmhouse.
+`DresserTableLocationY`   | Default: `0`. Description: Chnage the Y coordinate of the dresser in the Farmhouse.
+`PatchDresserInFarmHouse` | Default: `true`. Description: Places the dresser in the FarmHouse.
+`StoveInCorner`           | Default: `false`. Description: Whether the player has a mod that has a stove in the corner.
 
 ## Features
 ### Overview
