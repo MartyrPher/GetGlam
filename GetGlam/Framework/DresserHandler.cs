@@ -75,14 +75,14 @@ namespace GetGlam.Framework
             {
                 //Set the Tiles to the new tiles
                 buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y + 1] = new StaticTile(buildingLayer, dresserTilesheet, BlendMode.Alpha, DresserTileSheetPoint.X);
-                buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(frontLayer, dresserTilesheet, BlendMode.Alpha, DresserTileSheetPoint.Y);
+                frontLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(frontLayer, dresserTilesheet, BlendMode.Alpha, DresserTileSheetPoint.Y);
             }
             catch (Exception ex)
             {
                 //Print an error and set it to the default dresser
                 Entry.Monitor.Log("Could not find the dresser in the TileSheet, setting the dresser to default.", LogLevel.Warn);
                 buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y + 1] = new StaticTile(buildingLayer, dresserTilesheet, BlendMode.Alpha, 1);
-                buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(frontLayer, dresserTilesheet, BlendMode.Alpha, 0);
+                frontLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(frontLayer, dresserTilesheet, BlendMode.Alpha, 0);
                 TextureSourceRect.Y = 0;
             }
 
@@ -106,7 +106,7 @@ namespace GetGlam.Framework
 
             //Set the new tiles to the new tiles
             buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y + 1] = new StaticTile(buildingLayer, dresserTileSheet, BlendMode.Alpha, DresserTileSheetPoint.X);
-            buildingLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(frontLayer, dresserTileSheet, BlendMode.Alpha, DresserTileSheetPoint.Y);
+            frontLayer.Tiles[DresserPosition.X, DresserPosition.Y] = new StaticTile(frontLayer, dresserTileSheet, BlendMode.Alpha, DresserTileSheetPoint.Y);
 
             //Update the farmhouse map
             FarmHouse.updateMap();
