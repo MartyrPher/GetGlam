@@ -180,7 +180,7 @@ namespace GetGlam.Framework
                 }
 
                 //Cut the blank image from the image
-                CutEmptyImage(asset, AccessoryTextureHeight, 128);
+                //CutEmptyImage(asset, AccessoryTextureHeight, 128);
             }
 
             if (asset.AssetNameEquals("Characters\\Farmer\\skinColors"))
@@ -261,14 +261,14 @@ namespace GetGlam.Framework
         /// <returns>The number of Accessories</returns>
         public static int GetNumberOfAccessories()
         {
-            return AccessoryTextureHeight / 32 * 8 / 2;
+            return ContentPackHelper.NumberOfAccessoriesAdded;
         }
 
         /// <summary>Get the number of accessories minus one, used in AccessoryPatch</summary>
         /// <returns>The number of Accessories minus one</returns>
         public static int GetNumberOfAccessoriesMinusOne()
         {
-            return AccessoryTextureHeight / 32 * 8 / 2 - 1;
+            return ContentPackHelper.NumberOfAccessoriesAdded - 1;
         }
 
         /// <summary>Get the number of skin color, used in SkinColorPatch</summary>
