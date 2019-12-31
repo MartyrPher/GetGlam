@@ -19,5 +19,11 @@ namespace GetGlam.Framework
 
         //Whether to draw the dresser over top the player in the menu
         public bool DrawDresserInMenu { get; set; } = true;
+
+        //Whether to patch the dresser in the FarmHouse
+        public bool PatchDresserInFarmHouse { get; set; } = true;
+
+        //Whether there is a stove of the corner added by another mod
+        public bool StoveInCorner { get; set; } = false;
     }
 }
