@@ -114,33 +114,49 @@ namespace GetGlam.Framework
                 //If the hair directory exists
                 if (hairDirectory.Exists)
                 {
-                    //Create a new hair model
-                    HairModel hair = contentPack.ReadJsonFile<HairModel>("Hairstyles/hairstyles.json");
+                    HairModel hair;
+                    try
+                    {
+                        //Create a new hair model
+                        hair = contentPack.ReadJsonFile<HairModel>("Hairstyles/hairstyles.json");
+                        hair.Texture = contentPack.LoadAsset<Texture2D>("Hairstyles/hairstyles.png");
 
-                    //Set the vars in the hair model
-                    hair.Texture = contentPack.LoadAsset<Texture2D>("Hairstyles/hairstyles.png");
-                    hair.TextureHeight = hair.Texture.Height;
-                    hair.ModName = contentPack.Manifest.Name;
-                    NumberOfHairstlyesAdded += hair.NumberOfHairstyles;
+                        //Set the vars in the hair model
+                        hair.TextureHeight = hair.Texture.Height;
+                        hair.ModName = contentPack.Manifest.Name;
+                        NumberOfHairstlyesAdded += hair.NumberOfHairstyles;
 
-                    //Add the hair model to the list
-                    HairList.Add(hair);
+                        //Add the hair model to the list
+                        HairList.Add(hair);
+                    }
+                    catch
+                    {
+                        Entry.Monitor.Log($"{contentPack.Manifest.Name} hairstyles is emtpy. This pack was not added", LogLevel.Warn);
+                    }
                 }
 
                 //If the accessories directory exists
                 if (accessoriesDirectory.Exists)
                 {
-                    //Create the new accessory model
-                    AccessoryModel accessory = contentPack.ReadJsonFile<AccessoryModel>("Accessories/accessories.json");
+                    AccessoryModel accessory;
+                    try
+                    {
+                        //Create the new accessory model
+                        accessory = contentPack.ReadJsonFile<AccessoryModel>("Accessories/accessories.json");
+                        accessory.Texture = contentPack.LoadAsset<Texture2D>("Accessories/accessories.png");
 
-                    //Set the vars in the accessory model
-                    accessory.Texture = contentPack.LoadAsset<Texture2D>("Accessories/accessories.png");
-                    accessory.TextureHeight = accessory.Texture.Height;
-                    accessory.ModName = contentPack.Manifest.Name;
-                    NumberOfAccessoriesAdded += accessory.NumberOfAccessories;
+                        //Set the vars in the accessory model
+                        accessory.TextureHeight = accessory.Texture.Height;
+                        accessory.ModName = contentPack.Manifest.Name;
+                        NumberOfAccessoriesAdded += accessory.NumberOfAccessories;
 
-                    //Add the accessory to the accessory list
-                    AccessoryList.Add(accessory);
+                        //Add the accessory to the accessory list
+                        AccessoryList.Add(accessory);
+                    }
+                    catch
+                    {
+                        Entry.Monitor.Log($"{contentPack.Manifest.Name} accessories is emtpy. This pack was not added", LogLevel.Warn);
+                    }
                 }
 
                 //If the base directory exists
@@ -168,15 +184,24 @@ namespace GetGlam.Framework
                 if (dresserDirectory.Exists)
                 {
                     //Create a new dresser model
-                    DresserModel dresser = new DresserModel();
+                    DresserModel dresser;
+                    try
+                    {
+                        dresser = new DresserModel();
+                        dresser.Texture = contentPack.LoadAsset<Texture2D>("Dresser/dresser.png");
 
-                    //Set the vars of the Dresser model
-                    dresser.Texture = contentPack.LoadAsset<Texture2D>("Dresser/dresser.png");
-                    dresser.TextureHeight = dresser.Texture.Height;
-                    dresser.ModName = contentPack.Manifest.Name;
+                        //Set the vars of the Dresser model
+                        dresser.TextureHeight = dresser.Texture.Height;
+                        dresser.ModName = contentPack.Manifest.Name;
 
-                    //Add the dresser model to the dresser model list
-                    DresserList.Add(dresser);
+                        //Add the dresser model to the dresser model list
+                        DresserList.Add(dresser);
+                    }
+                    catch
+                    {
+                        Entry.Monitor.Log($"{contentPack.Manifest.Name} dressers is emtpy. This pack was not added", LogLevel.Warn);
+                    }
+
                 }
 
                 //If the shoe directory exists
@@ -196,45 +221,60 @@ namespace GetGlam.Framework
                 //If the Face and Nose directory exists
                 if (faceAndNoseDirectory.Exists)
                 {
-                    //Create a facenose model and read the json
-                    FaceNoseModel model = contentPack.ReadJsonFile<FaceNoseModel>(Path.Combine("FaceAndNose", "count.json"));
-
-                    //Add the count of faces to the dictionary for the base texture
-                    MaleBaseFaceNoseCount.Add(MaleBaseTextureList[MaleBaseTextureList.Count - 1], new int[] { model.NumberOfMaleFaces, model.NumberOfMaleNoses });
-                    FemaleBaseFaceNoseCount.Add(FemaleBaseTextureList[FemaleBaseTextureList.Count - 1], new int[] { model.NumberOfFemaleFaces, model.NumberOfFemaleNoses });
-
-                    //New dictionaries to be added to the dictionary
-                    Dictionary<string, Texture2D> currentPackMaleFaceNoseDict = new Dictionary<string, Texture2D>();
-                    Dictionary<string, Texture2D> currentPackFemaleFaceNoseDict = new Dictionary<string, Texture2D>();
-
-                    //Load the face and nose textures somewhere
-                    foreach (FileInfo file in faceAndNoseDirectory.EnumerateFiles())
+                    try
                     {
-                        //It's always going to find the female faces first
-                        if (file.Name.Contains("female_face"))
-                            currentPackFemaleFaceNoseDict.Add(file.Name, contentPack.LoadAsset<Texture2D>(Path.Combine("FaceAndNose", file.Name)));
-                        else if (file.Name.Contains("male_face"))
-                            currentPackMaleFaceNoseDict.Add(file.Name, contentPack.LoadAsset<Texture2D>(Path.Combine("FaceAndNose", file.Name)));
-                    }
+                        //Create a facenose model and read the json
+                        FaceNoseModel model = contentPack.ReadJsonFile<FaceNoseModel>(Path.Combine("FaceAndNose", "count.json"));
 
-                    //Add it to the Dictionary
-                    MaleFaceAndNoseTextureDict.Add(MaleBaseTextureList[MaleBaseTextureList.Count - 1], currentPackMaleFaceNoseDict);
-                    FemaleFaceAndNoseTextureDict.Add(FemaleBaseTextureList[FemaleBaseTextureList.Count - 1], currentPackFemaleFaceNoseDict);
+                        //Add the count of faces to the dictionary for the base texture
+                        MaleBaseFaceNoseCount.Add(MaleBaseTextureList[MaleBaseTextureList.Count - 1], new int[] { model.NumberOfMaleFaces, model.NumberOfMaleNoses });
+                        FemaleBaseFaceNoseCount.Add(FemaleBaseTextureList[FemaleBaseTextureList.Count - 1], new int[] { model.NumberOfFemaleFaces, model.NumberOfFemaleNoses });
+
+                        //New dictionaries to be added to the dictionary
+                        Dictionary<string, Texture2D> currentPackMaleFaceNoseDict = new Dictionary<string, Texture2D>();
+                        Dictionary<string, Texture2D> currentPackFemaleFaceNoseDict = new Dictionary<string, Texture2D>();
+
+                        //Load the face and nose textures somewhere
+                        foreach (FileInfo file in faceAndNoseDirectory.EnumerateFiles())
+                        {
+                            //It's always going to find the female faces first
+                            if (file.Name.Contains("female_face"))
+                                currentPackFemaleFaceNoseDict.Add(file.Name, contentPack.LoadAsset<Texture2D>(Path.Combine("FaceAndNose", file.Name)));
+                            else if (file.Name.Contains("male_face"))
+                                currentPackMaleFaceNoseDict.Add(file.Name, contentPack.LoadAsset<Texture2D>(Path.Combine("FaceAndNose", file.Name)));
+                        }
+
+                        //Add it to the Dictionary
+                        MaleFaceAndNoseTextureDict.Add(MaleBaseTextureList[MaleBaseTextureList.Count - 1], currentPackMaleFaceNoseDict);
+                        FemaleFaceAndNoseTextureDict.Add(FemaleBaseTextureList[FemaleBaseTextureList.Count - 1], currentPackFemaleFaceNoseDict);
+                    }
+                    catch
+                    {
+                        Entry.Monitor.Log($"{contentPack.Manifest.Name} faces and noses is emtpy. This pack was not added", LogLevel.Warn);
+                    }
                 }
 
                 //If the skin color directory exists
                 if (skinColorDirectory.Exists)
                 {
-                    //Create a new skin color model
-                    SkinColorModel model = new SkinColorModel();
+                    try
+                    {
+                        //Create a new skin color model
+                        SkinColorModel model = new SkinColorModel();
 
-                    //Set the model info
-                    model.Texture = contentPack.LoadAsset<Texture2D>(Path.Combine("SkinColor", "skinColors.png"));
-                    model.TextureHeight = model.Texture.Height;
-                    model.ModName = contentPack.Manifest.Name;
+                        //Set the model info
+                        model.Texture = contentPack.LoadAsset<Texture2D>(Path.Combine("SkinColor", "skinColors.png"));
+                        model.TextureHeight = model.Texture.Height;
+                        model.ModName = contentPack.Manifest.Name;
 
-                    //Add the model to the list
-                    SkinColorList.Add(model);
+                        //Add the model to the list
+                        SkinColorList.Add(model);
+                    }
+                    catch
+                    {
+                        Entry.Monitor.Log($"{contentPack.Manifest.Name} skin colors is emtpy. This pack was not added", LogLevel.Warn);
+                    }
+
                 }
             }
 
