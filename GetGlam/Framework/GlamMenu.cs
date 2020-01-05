@@ -99,10 +99,10 @@ namespace GetGlam.Framework
         private int PaddingY = 8;
 
         //Wether to draw the base buttons
-        private bool ShouldDrawBaseButtons = true;
+        private bool ShouldDrawBaseButtons = false;
 
         //Whether to draw the dresser button
-        private bool ShouldDrawDresserButtons = true;
+        private bool ShouldDrawDresserButtons = false;
 
         //Whether to draw the face and nose buttons
         private bool ShouldDrawNosesAndFaceButtons = false;
@@ -714,7 +714,7 @@ namespace GetGlam.Framework
                     break;
                 case "LeftChangeHair":
                     if (Game1.player.hair.Get().Equals(0) && PackHelper.NumberOfHairstlyesAdded == 56)
-                        Game1.player.hair.Set(Game1.player.hair.Value + direction);
+                        Game1.player.hair.Set(FarmerRenderer.hairStylesTexture.Height / 96 * 8 - 1);
                     else if (Game1.player.hair.Get().Equals(0) && PackHelper.NumberOfHairstlyesAdded != 56)
                         Game1.player.hair.Set(PackHelper.NumberOfHairstlyesAdded - 1);
                     else
