@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace GetGlam.Framework
 {
     /// <summary>Class that draws the custom menu and allows the player to change appearance.<summary>
-    public class GlamMenu : CharacterCustomization
+    public class GlamMenu : IClickableMenu
     {
         //Instance of ModEntry
         private ModEntry Entry;
@@ -25,9 +25,6 @@ namespace GetGlam.Framework
 
         //Instanc of PlayerLoader
         private CharacterLoader PlayerLoader;
-
-        //Instance of Pet, used to check to disable the pet button
-        private Pet Pet;
 
         //List of new left buttons added to the menu
         private List<ClickableTextureComponent> NewLeftButtonsList = new List<ClickableTextureComponent>();
@@ -53,8 +50,20 @@ namespace GetGlam.Framework
         //Tab Button the Glam Menu
         private ClickableTextureComponent GlamMenuTab;
 
+        //Okay Button
+        private ClickableTextureComponent OkButton;
+
         //Cancel button
         private ClickableTextureComponent CancelButton;
+
+        //Eye Color Picker
+        private ColorPicker EyeColorPicker;
+
+        //Hair Color Picker
+        private ColorPicker HairColorPicker;
+
+        //Both gender buttons
+        private List<ClickableTextureComponent> GenderButtons = new List<ClickableTextureComponent>();
 
         //Whether the button is selected
         private bool IsHatFixSelected = false;
@@ -86,13 +95,25 @@ namespace GetGlam.Framework
         //SnapShot of eyecolor
         private Color EyeColorSnapshot;
 
+        //Padding for each selection Y
+        private int PaddingY = 8;
+
+        //Wether to draw the base buttons
+        private bool ShouldDrawBaseButtons = true;
+
+        //Whether to draw the dresser button
+        private bool ShouldDrawDresserButtons = true;
+
+        //Whether to draw the face and nose buttons
+        private bool ShouldDrawNosesAndFaceButtons = false;
+
         /// <summary>Glam Menu's Conrstructor</summary>
         /// <param name="entry">Instance of <see cref="ModEntry"/></param>
         /// <param name="packHelper">Instance of <see cref="ContentPackHelper"/></param>
         /// <param name="dresser">Instance of <see cref="DresserHandler"/></param>
         /// <param name="playerLoader">Instance of <seealso cref="CharacterLoader"/></param>
         public GlamMenu(ModEntry entry, ModConfig config, ContentPackHelper packHelper, DresserHandler dresser, CharacterLoader playerLoader)
-            : base(Source.Wizard)
+            : base((int)Utility.getTopLeftPositionForCenteringOnScreen(712, 712, 0, 0).X, (int)Utility.getTopLeftPositionForCenteringOnScreen(712, 712, 0, 0).Y - IClickableMenu.borderWidth, 712, 712, false)
         {
             //Set the vars to the Instances
             Entry = entry;
@@ -100,9 +121,6 @@ namespace GetGlam.Framework
             PackHelper = packHelper;
             Dresser = dresser;
             PlayerLoader = playerLoader;
-
-            //Grab the players pet
-            Pet = Game1.getCharacterFromName<Pet>(Game1.player.getPetName(), false);
 
             //Check if they're wearing a hat
             if (Game1.player.hat.Value != null)
@@ -175,117 +193,60 @@ namespace GetGlam.Framework
             NewLeftButtonsList.Clear();
             NewRightButtonsList.Clear();
             NewLabels.Clear();
+            GenderButtons.Clear();
 
             //Add all the new left buttons to the list
             NewLeftButtonsList.Add(new ClickableTextureComponent("LeftBase", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 128, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
-            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftFace", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 400, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
-            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftNose", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 464, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
-            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftShoe", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 528, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
+            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftChangeSkin", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 192 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
+            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftChangeHair", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 256 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
+            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftChangeAcc", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 320 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
+            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftFace", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 384 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
+            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftNose", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 448 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
+            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftShoe", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 512 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
             NewLeftButtonsList.Add(new ClickableTextureComponent("LeftDresser", new Rectangle(this.xPositionOnScreen + this.width / 2 - 114, this.yPositionOnScreen + 200, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
+            NewLeftButtonsList.Add(new ClickableTextureComponent("LeftDirection", new Rectangle(this.xPositionOnScreen + this.width / 2 - 114, this.yPositionOnScreen + 288, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
 
             //Add all the new right buttons to the list
             NewRightButtonsList.Add(new ClickableTextureComponent("RightBase", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 128, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
-            NewRightButtonsList.Add(new ClickableTextureComponent("RightFace", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 400, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
-            NewRightButtonsList.Add(new ClickableTextureComponent("RightNose", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 464, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
-            NewRightButtonsList.Add(new ClickableTextureComponent("RightShoe", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 528, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+            NewRightButtonsList.Add(new ClickableTextureComponent("RightChangeSkin", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 192 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+            NewRightButtonsList.Add(new ClickableTextureComponent("RightChangeHair", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 256 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+            NewRightButtonsList.Add(new ClickableTextureComponent("RightChangeAcc", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 320 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+            NewRightButtonsList.Add(new ClickableTextureComponent("RightFace", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 384 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+            NewRightButtonsList.Add(new ClickableTextureComponent("RightNose", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 448 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+            NewRightButtonsList.Add(new ClickableTextureComponent("RightShoe", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 512 + PaddingY, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
             NewRightButtonsList.Add(new ClickableTextureComponent("RightDresser", new Rectangle(this.xPositionOnScreen + this.width / 2 + 48, this.yPositionOnScreen + 200, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
+            NewRightButtonsList.Add(new ClickableTextureComponent("RightDirection", new Rectangle(this.xPositionOnScreen + this.width / 2 + 48, this.yPositionOnScreen + 288, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
 
-            //Only add the new button if spacecore is installed an
-            if (Entry.IsSpaceCoreInstalled && PackHelper.NumberOfHairstlyesAdded > 355)
-            {
-                NewLeftButtonsList.Add(new ClickableTextureComponent("LeftHair", new Rectangle(this.xPositionOnScreen + 44, this.yPositionOnScreen + 272, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 44, -1, -1), 1f, false));
-                NewRightButtonsList.Add(new ClickableTextureComponent("RightHair", new Rectangle(this.xPositionOnScreen + 170, this.yPositionOnScreen + 272, 64, 64), null, "", Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 33, -1, -1), 1f, false));
-            }
-
-            //Create buttons and add new labels to the list
+            //Create buttons.
             FavoriteMenuTab = new ClickableTextureComponent("FavoriteTab", new Rectangle(this.xPositionOnScreen - IClickableMenu.borderWidth - 8, this.yPositionOnScreen + 160, 64, 64), null, "FavoriteTab", Game1.mouseCursors, new Rectangle(656, 80, 16, 16), 4f, false);
             GlamMenuTab = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen - IClickableMenu.borderWidth + 1, this.yPositionOnScreen + 96, 64, 64), Game1.mouseCursors, new Rectangle(672, 80, 15, 16), 4f, false);
             HatCoversHairButton = new ClickableTextureComponent("HatFix", new Rectangle(this.xPositionOnScreen + this.width / 2 - 114, this.yPositionOnScreen + 128, 36, 36), null, "Hat Hair Fix", Game1.mouseCursors, new Rectangle(227, 425, 9, 9), 4f, false);
             AddToFavoritesButton = new ClickableTextureComponent("Favorite", new Rectangle(this.xPositionOnScreen + this.width - 96, this.yPositionOnScreen + 224, 48, 48), null, "Favorite", Game1.mouseCursors, new Rectangle(346, 392, 8, 8), 6f, false);
+
+            HatCoversHairButton.visible = false;
+
+            //Add the new labels to the list
             NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[0].bounds.X + 70, NewLeftButtonsList[0].bounds.Y + 16, 1, 1), "Base", "Base"));
-            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[1].bounds.X + 70, NewLeftButtonsList[1].bounds.Y + 16, 1, 1), "Face", "Face"));
-            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[2].bounds.X + 70, NewLeftButtonsList[2].bounds.Y + 16, 1, 1), "Nose", "Nose"));
-            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[3].bounds.X + 70, NewLeftButtonsList[3].bounds.Y + 16, 1, 1), "Shoe", "Shoe"));
-            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[4].bounds.X + 70, NewLeftButtonsList[4].bounds.Y + 16, 1, 1), "Dresser", "Dresser"));
+            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[1].bounds.X + 70, NewLeftButtonsList[1].bounds.Y + 16, 1, 1), "Skin", "Skin"));
+            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[2].bounds.X + 70, NewLeftButtonsList[2].bounds.Y + 16, 1, 1), "Hair", "Hair"));
+            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[3].bounds.X + 70, NewLeftButtonsList[3].bounds.Y + 16, 1, 1), "Acc.", "Acc."));
+            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[4].bounds.X + 70, NewLeftButtonsList[4].bounds.Y + 16, 1, 1), "Face", "Face"));
+            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[5].bounds.X + 70, NewLeftButtonsList[5].bounds.Y + 16, 1, 1), "Nose", "Nose"));
+            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[6].bounds.X + 70, NewLeftButtonsList[6].bounds.Y + 16, 1, 1), "Shoe", "Shoe"));
+            NewLabels.Add(new ClickableComponent(new Rectangle(NewLeftButtonsList[7].bounds.X + 70, NewLeftButtonsList[7].bounds.Y + 16, 1, 1), "Dresser", "Dresser"));
+            NewLabels.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + width - 212, this.yPositionOnScreen + 272, 1, 1), "Eye Color:", "Eye Color:"));
+            NewLabels.Add(new ClickableComponent(new Rectangle(this.xPositionOnScreen + width - 212, this.yPositionOnScreen + 360, 1, 1), "Hair Color:", "Hair Color:"));
+
             HatFixLabel = new ClickableComponent(new Rectangle(HatCoversHairButton.bounds.X + 48, HatCoversHairButton.bounds.Y, 1, 1), "Hat Ignores Hair", "Hat Ignores Hair");
 
-            //Change the bounds in the already created left selection button list
-            foreach (ClickableTextureComponent buttonComponent in this.leftSelectionButtons)
-            {
-                if (buttonComponent.name.Contains("Dir"))
-                {
-                    buttonComponent.bounds.X -= 16;
-                    buttonComponent.bounds.Y += 16;
-                }
-                else
-                {
-                    buttonComponent.bounds.X -= 30;
-                    buttonComponent.bounds.Y -= 128;
-                }
-
-                //Only disable if space core is installed and the number of hairstyles add is greater then 355
-                if (Entry.IsSpaceCoreInstalled && PackHelper.NumberOfHairstlyesAdded > 355)
-                {
-                    //Disable the previous hair button
-                    if (buttonComponent.name.Contains("Hair"))
-                        buttonComponent.visible = false;
-                }
-            }
-
-            //Change the bounds in the already created right selection button list
-            foreach (ClickableTextureComponent buttonComponent in this.rightSelectionButtons)
-            {
-                if (buttonComponent.name.Contains("Dir"))
-                {
-                    buttonComponent.bounds.X += 16;
-                    buttonComponent.bounds.Y += 16;
-                }
-                else
-                {
-                    buttonComponent.bounds.X -= 30;
-                    buttonComponent.bounds.Y -= 128;
-                }
-
-                //Only disable if space core is installed and the number of hairstyles add is greater then 355
-                if (Entry.IsSpaceCoreInstalled && PackHelper.NumberOfHairstlyesAdded > 355)
-                {
-                    //Disable the previous hair button
-                    if (buttonComponent.name.Contains("Hair"))
-                        buttonComponent.visible = false;
-                }
-            }
-
-            //Change the bounds and set color pickers for the labels
-            foreach (ClickableComponent component in this.labels)
-            {
-                if (component.name.Contains("Color"))
-                {
-                    component.bounds.X += 230;
-                    component.bounds.Y -= 64;
-
-                    if (component.name.Contains("Eye"))
-                    {
-                        //Set the eye color picker to new instance and set the color
-                        this.eyeColorPicker = new ColorPicker("Eyes", component.bounds.X, component.bounds.Y + 36);
-                        this.eyeColorPicker.setColor(Game1.player.newEyeColor.Value);
-                    }
-                    else if (component.name.Contains("Hair"))
-                    {
-                        //Sets the hair color picker to new instance and set the color
-                        component.bounds.Y += 64;
-                        this.hairColorPicker = new ColorPicker("Hair", component.bounds.X, component.bounds.Y + 36);
-                        this.hairColorPicker.setColor(Game1.player.hairstyleColor.Value);
-                    }
-                }
-                else
-                {
-                    component.bounds.X -= 30;
-                    component.bounds.Y -= 128;
-                }
-            }
+            //Create the color pickers and assign their values
+            EyeColorPicker = new ColorPicker("Eyes", NewLabels[8].bounds.X, NewLabels[8].bounds.Y + 32);
+            EyeColorPicker.setColor(Game1.player.newEyeColor.Value);
+            HairColorPicker = new ColorPicker("Hair", NewLabels[9].bounds.X, NewLabels[9].bounds.Y + 32);
+            HairColorPicker.setColor(Game1.player.hairstyleColor.Value);
 
             //Add male gender button
-            this.genderButtons.Add(new ClickableTextureComponent(
+            GenderButtons.Add(new ClickableTextureComponent(
                 "Male",
                 new Rectangle(xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 128, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 64, 64),
                 null,
@@ -297,7 +258,7 @@ namespace GetGlam.Framework
             );
 
             //Add female gender button
-            this.genderButtons.Add(new ClickableTextureComponent(
+            GenderButtons.Add(new ClickableTextureComponent(
                 "Female",
                 new Rectangle(xPositionOnScreen + this.width - IClickableMenu.spaceToClearSideBorder - IClickableMenu.borderWidth - 64, this.yPositionOnScreen + IClickableMenu.borderWidth + IClickableMenu.spaceToClearTopBorder, 64, 64),
                 null,
@@ -308,15 +269,50 @@ namespace GetGlam.Framework
                 false)
             );
 
-            //disbale the random button
-            this.randomButton.visible = false;
-
-            //Change the bounds on the ok button
-            this.okButton.bounds.Y += 8;
-            this.okButton.bounds.X += 8;
+            //Create the Ok button
+            OkButton = new ClickableTextureComponent("Ok", new Rectangle(this.xPositionOnScreen + width - 108, this.yPositionOnScreen + height - 108, 64, 64), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 46, -1, -1), 1f, false);
 
             //Create the cancel button
-            CancelButton = new ClickableTextureComponent("Cancel", new Rectangle(this.okButton.bounds.X - 74, this.okButton.bounds.Y, 64, 64), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47, -1, -1), 1f, false);
+            CancelButton = new ClickableTextureComponent("Cancel", new Rectangle(OkButton.bounds.X - 74, this.OkButton.bounds.Y, 64, 64), null, null, Game1.mouseCursors, Game1.getSourceRectForStandardTileSheet(Game1.mouseCursors, 47, -1, -1), 1f, false);
+
+            //Set the buttons to hide by default visibility to false
+            NewLeftButtonsList[0].visible = false;
+            NewRightButtonsList[0].visible = false;
+            NewLeftButtonsList[7].visible = false;
+            NewRightButtonsList[7].visible = false;
+
+            //Check if the menu should draw the base buttons if the base count is greater than 1
+            if (Game1.player.isMale && PackHelper.MaleBaseTextureList.Count > 0)
+            {
+                ShouldDrawBaseButtons = true;
+                NewLeftButtonsList[0].visible = true;
+                NewRightButtonsList[0].visible = true;
+            }
+            else if (PackHelper.FemaleBaseTextureList.Count > 0)
+            {
+                ShouldDrawBaseButtons = true;
+                NewLeftButtonsList[0].visible = true;
+                NewRightButtonsList[0].visible = true;
+            }
+
+            //Check if the menu should draw the dresser buttons
+            if (Dresser.GetNumberOfDressers() > 1)
+            {
+                ShouldDrawDresserButtons = true;
+                NewLeftButtonsList[7].visible = true;
+                NewRightButtonsList[7].visible = true;
+            }
+
+            if (PackHelper.GetNumberOfFacesAndNoses(Game1.player.isMale, BaseIndex, true) > 0)
+            {
+                ShouldDrawNosesAndFaceButtons = true;
+                UpdateFaceAndNoseButtonsPositions(ShouldDrawNosesAndFaceButtons);
+            }
+            else
+            {
+                ShouldDrawNosesAndFaceButtons = false;
+                UpdateFaceAndNoseButtonsPositions(ShouldDrawNosesAndFaceButtons);
+            }
         }
 
         /// <summary>Override to change the menu when the window size changes</summary>
@@ -360,7 +356,7 @@ namespace GetGlam.Framework
             }
 
             //Change the scale of the gender buttons
-            foreach (ClickableTextureComponent genderButton in this.genderButtons)
+            foreach (ClickableTextureComponent genderButton in GenderButtons)
             {
                 if (genderButton.containsPoint(x, y))
                     genderButton.scale = Math.Min(genderButton.scale + 0.05f, genderButton.baseScale + 0.1f);
@@ -368,10 +364,18 @@ namespace GetGlam.Framework
                     genderButton.scale = Math.Max(genderButton.scale - 0.05f, genderButton.baseScale);
             }
 
+            if (EyeColorPicker.containsPoint(x, y) || HairColorPicker.containsPoint(x, y))
+                Game1.SetFreeCursorDrag();
+
             if (AddToFavoritesButton.containsPoint(x, y))
                 AddToFavoritesButton.scale = Math.Min(AddToFavoritesButton.scale + 0.05f, AddToFavoritesButton.baseScale + 0.5f);
             else
                 AddToFavoritesButton.scale = Math.Max(AddToFavoritesButton.scale - 0.05f, AddToFavoritesButton.baseScale);
+
+            if (OkButton.containsPoint(x, y))
+                OkButton.scale = Math.Min(OkButton.scale + 0.05f, OkButton.baseScale + 0.1f);
+            else
+                OkButton.scale = Math.Max(OkButton.scale - 0.05f, OkButton.baseScale);
 
             if (CancelButton.containsPoint(x, y))
                 CancelButton.scale = Math.Min(CancelButton.scale + 0.05f, CancelButton.baseScale + 0.1f);
@@ -389,30 +393,49 @@ namespace GetGlam.Framework
             base.receiveLeftClick(x, y, playSound);
 
             //Check if the Hat Hair fix button is pressed and change accordingly
-            if (HatCoversHairButton.bounds.Contains(x, y) && !IsHatFixSelected)
+            if (HatCoversHairButton.bounds.Contains(x, y) && !IsHatFixSelected && HatCoversHairButton.visible)
             {
                 IsHatFixSelected = true;
                 Game1.player.hat.Value.hairDrawType.Set(0);
                 HatCoversHairButton.sourceRect.X = 236;
             }
-            else if (HatCoversHairButton.bounds.Contains(x, y) && IsHatFixSelected)
+            else if (HatCoversHairButton.bounds.Contains(x, y) && IsHatFixSelected && HatCoversHairButton.visible)
             {
                 IsHatFixSelected = false;
                 Game1.player.hat.Value.hairDrawType.Set(1);
                 HatCoversHairButton.sourceRect.X = 227;
             }
 
+            //Eye and Color Picker clicks
+            if (EyeColorPicker.containsPoint(x, y))
+                Game1.player.changeEyeColor(EyeColorPicker.click(x, y));
+
+            if (HairColorPicker.containsPoint(x, y))
+                Game1.player.changeHairColor(HairColorPicker.click(x, y));
+
             //Check if any of the new left buttons were clicked
             foreach (ClickableTextureComponent component in NewLeftButtonsList)
             {
                 if (component.bounds.Contains(x, y))
-                {
+                {  
                     SelectionClick(component.name, -1);
                     if (component.scale != 0f)
                     {
                         component.scale -= 0.25f;
                         component.scale = Math.Max(0.75f, component.scale);
                     }
+
+                    if (Game1.player.hair.Value - 49 <= 6 && !IsBald && component.name.Contains("ChangeHair"))
+                    {
+                        IsBald = true;
+                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    }
+                    else if (IsBald && !(Game1.player.hair.Value - 49 <= 6) && component.name.Contains("ChangeHair"))
+                    {
+                        IsBald = false;
+                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    }
+
                     Game1.playSound("grassyStep");
                 }
             }
@@ -421,60 +444,36 @@ namespace GetGlam.Framework
             foreach (ClickableTextureComponent component in NewRightButtonsList)
             {
                 if (component.bounds.Contains(x, y))
-                {
+                { 
                     SelectionClick(component.name, 1);
                     if (component.scale != 0f)
                     {
                         component.scale -= 0.25f;
                         component.scale = Math.Max(0.75f, component.scale);
                     }
+
+                    if (Game1.player.hair.Value - 49 <= 6 && !IsBald && component.name.Contains("ChangeHair"))
+                    {
+                        IsBald = true;
+                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    }
+                    else if (IsBald && !(Game1.player.hair.Value - 49 <= 6) && component.name.Contains("ChangeHair"))
+                    {
+                        IsBald = false;
+                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    }
+
                     Game1.playSound("grassyStep");
                 }
             }
 
             //Check if any of the gender buttons are clicked
-            foreach (ClickableTextureComponent genderButton in this.genderButtons)
+            foreach (ClickableTextureComponent genderButton in GenderButtons)
             {
                 if (genderButton.containsPoint(x, y))
                 {
                     SelectionClick(genderButton.name, 0);
                     Game1.playSound("yoba");
-                }
-            }
-
-            //Check if the left Hair style button is pressed, used to calculate baldness
-            foreach (ClickableTextureComponent hairButton in this.leftSelectionButtons)
-            {
-                if (hairButton.containsPoint(x, y) && hairButton.name.Contains("Hair"))
-                {
-                    if (Game1.player.FarmerRenderer.textureName.Value.Contains("bald"))
-                    {
-                        IsBald = true;
-                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
-                    }
-                    else if (IsBald && !Game1.player.FarmerRenderer.textureName.Value.Contains("bald"))
-                    {
-                        IsBald = false;
-                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
-                    }
-                }
-            }
-
-            //Check if the right Hair style button is pressed, used to calculate baldness
-            foreach (ClickableTextureComponent hairButton in this.rightSelectionButtons)
-            {
-                if (hairButton.containsPoint(x, y) && hairButton.name.Contains("Hair"))
-                {
-                    if (Game1.player.FarmerRenderer.textureName.Value.Contains("bald"))
-                    {
-                        IsBald = true;
-                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
-                    }
-                    else if (IsBald && !Game1.player.FarmerRenderer.textureName.Value.Contains("bald"))
-                    {
-                        IsBald = false;
-                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
-                    }
                 }
             }
 
@@ -498,8 +497,13 @@ namespace GetGlam.Framework
             }
 
             //Check the okbutton again to save the player when the menu closes
-            if (this.okButton.containsPoint(x, y))
+            if (OkButton.containsPoint(x, y))
+            {
                 PlayerLoader.SaveCharacterLayout(Game1.player.isMale, BaseIndex, Game1.player.skin.Value, Game1.player.hair.Value, FaceIndex, NoseIndex, ShoeIndex, Game1.player.accessory.Value, DresserIndex, IsBald);
+                Game1.exitActiveMenu();
+                Game1.flashAlpha = 1f;
+                Game1.playSound("yoba");
+            }
 
             //Check if the cancel button was clicked
             if (CancelButton.containsPoint(x, y))
@@ -515,31 +519,70 @@ namespace GetGlam.Framework
             }
         }
 
+        /// <summary>Override to handle the left click being held</summary>
+        /// <param name="x">The x position of the mouse</param>
+        /// <param name="y">The y position of the mouse</param>
+        public override void leftClickHeld(int x, int y)
+        {
+            base.leftClickHeld(x, y);
+
+            //Tell the color pickers that the click was held and change the color
+            if (EyeColorPicker.containsPoint(x, y))
+            {
+                EyeColorPicker.clickHeld(x, y);
+                Game1.player.newEyeColor.Set(EyeColorPicker.getSelectedColor());
+                Game1.player.changeEyeColor(Game1.player.newEyeColor);
+
+            }
+
+            if (HairColorPicker.containsPoint(x, y))
+            {
+                HairColorPicker.clickHeld(x, y);
+                Game1.player.hairstyleColor.Set(HairColorPicker.getSelectedColor());
+                Game1.player.changeHairColor(Game1.player.hairstyleColor);
+            }
+        }
+
+        /// <summary>Override to handle the left click being released</summary>
+        /// <param name="x">The x position of the mouse</param>
+        /// <param name="y">The y position of the mouse</param>
+        public override void releaseLeftClick(int x, int y)
+        {
+            base.releaseLeftClick(x, y);
+
+            //Tell the color pickers that the click was released
+            if (EyeColorPicker.containsPoint(x, y))
+                EyeColorPicker.releaseClick();
+
+            if (HairColorPicker.containsPoint(x, y))
+                HairColorPicker.releaseClick();
+        }
+
         /// <summary>Update the buttons for changing the face and nose.</summary>
         /// <param name="isFaceAndNoseDrawing">Wether the face and nose buttons are drawing</param>
         private void UpdateFaceAndNoseButtonsPositions(bool isFaceAndNoseDrawing)
         {
             if (isFaceAndNoseDrawing)
             {
-                NewLeftButtonsList[1].visible = true;
-                NewLeftButtonsList[2].visible = true;
-                NewRightButtonsList[1].visible = true;
-                NewRightButtonsList[2].visible = true;
+                NewLeftButtonsList[4].visible = true;
+                NewLeftButtonsList[5].visible = true;
+                NewRightButtonsList[4].visible = true;
+                NewRightButtonsList[5].visible = true;
 
-                NewLeftButtonsList[3].bounds.Y = this.yPositionOnScreen + 528;
-                NewRightButtonsList[3].bounds.Y = this.yPositionOnScreen + 528;
-                NewLabels[3].bounds.Y = NewLeftButtonsList[3].bounds.Y + 16;
+                NewLeftButtonsList[6].bounds.Y = this.yPositionOnScreen + 512 + PaddingY;
+                NewRightButtonsList[6].bounds.Y = this.yPositionOnScreen + 512 + PaddingY;
+                NewLabels[6].bounds.Y = NewLeftButtonsList[6].bounds.Y + 16;
             }
             else
             {
-                NewLeftButtonsList[1].visible = false;
-                NewLeftButtonsList[2].visible = false;
-                NewRightButtonsList[1].visible = false;
-                NewRightButtonsList[2].visible = false;
+                NewLeftButtonsList[4].visible = false;
+                NewLeftButtonsList[5].visible = false;
+                NewRightButtonsList[4].visible = false;
+                NewRightButtonsList[5].visible = false;
 
-                NewLeftButtonsList[3].bounds.Y = this.yPositionOnScreen + 400;
-                NewRightButtonsList[3].bounds.Y = this.yPositionOnScreen + 400;
-                NewLabels[3].bounds.Y = NewLeftButtonsList[3].bounds.Y + 16;
+                NewLeftButtonsList[6].bounds.Y = this.yPositionOnScreen + 384 + PaddingY;
+                NewRightButtonsList[6].bounds.Y = this.yPositionOnScreen + 384 + PaddingY;
+                NewLabels[6].bounds.Y = NewLeftButtonsList[6].bounds.Y + 16;
             }
         }
 
@@ -552,6 +595,9 @@ namespace GetGlam.Framework
             switch (name)
             {
                 case "LeftBase":
+                    if (!NewLeftButtonsList[0].visible)
+                        return;
+
                     if (BaseIndex + direction > -1)
                         BaseIndex += direction;
                     else
@@ -562,6 +608,9 @@ namespace GetGlam.Framework
                     PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "RightBase":
+                    if (!NewRightButtonsList[0].visible)
+                        return;
+
                     if (BaseIndex + direction > (Game1.player.isMale ? PackHelper.MaleBaseTextureList.Count : PackHelper.FemaleBaseTextureList.Count))
                         BaseIndex = 0;
                     else
@@ -620,6 +669,9 @@ namespace GetGlam.Framework
                     PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "LeftDresser":
+                    if (!NewLeftButtonsList[7].visible)
+                        return;
+
                     if (DresserIndex + direction > 0)
                         DresserIndex += direction;
                     else
@@ -631,6 +683,9 @@ namespace GetGlam.Framework
                     Dresser.UpdateDresserInFarmHouse();
                     break;
                 case "RightDresser":
+                    if (!NewRightButtonsList[7].visible)
+                        return;
+
                     if (DresserIndex + direction <= Dresser.GetNumberOfDressers())
                         DresserIndex += direction;
                     else
@@ -657,17 +712,35 @@ namespace GetGlam.Framework
                     ShoeIndex = 0;
                     PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
-                case "LeftHair":
-                    if (Game1.player.hair.Get().Equals(0))
+                case "LeftChangeHair":
+                    if (Game1.player.hair.Get().Equals(0) && PackHelper.NumberOfHairstlyesAdded == 56)
+                        Game1.player.hair.Set(Game1.player.hair.Value + direction);
+                    else if (Game1.player.hair.Get().Equals(0) && PackHelper.NumberOfHairstlyesAdded != 56)
                         Game1.player.hair.Set(PackHelper.NumberOfHairstlyesAdded - 1);
                     else
-                        Game1.player.hair.Set(Game1.player.hair.Get() + direction);
-                    break;
-                case "RightHair":
-                    if (Game1.player.hair.Get().Equals(PackHelper.NumberOfHairstlyesAdded - 1))
+                        Game1.player.hair.Set(Game1.player.hair.Value + direction);
+                    break;   
+                case "RightChangeHair":
+                    if (PackHelper.NumberOfHairstlyesAdded == 56 && Game1.player.hair.Value + 1 > FarmerRenderer.hairStylesTexture.Height / 96 * 8 - 1)
+                        Game1.player.hair.Set(0);
+                    else if (PackHelper.NumberOfHairstlyesAdded != 56 && Game1.player.hair.Value.Equals(PackHelper.NumberOfHairstlyesAdded - 1))
                         Game1.player.hair.Set(0);
                     else
-                        Game1.player.hair.Set(Game1.player.hair.Get() + direction);
+                        Game1.player.hair.Set(Game1.player.hair.Value + direction);
+                    break;
+                case "LeftChangeSkin":
+                case "RightChangeSkin":
+                    Game1.player.changeSkinColor(Game1.player.skin.Value + direction);
+                    break;
+                case "LeftChangeAcc":
+                case "RightChangeAcc":
+                    Game1.player.changeAccessory(Game1.player.accessory.Value + direction);
+                    break;
+                case "LeftDirection":
+                case "RightDirection":
+                    Game1.player.faceDirection((Game1.player.FacingDirection - direction + 4) % 4);
+                    Game1.player.FarmerSprite.StopAnimation();
+                    Game1.player.completelyStopAnimatingOrDoingAction();
                     break;
             }
         }
@@ -676,11 +749,6 @@ namespace GetGlam.Framework
         /// <param name="b">The games spritebatch</param>
         public override void draw(SpriteBatch b)
         {
-            //bools whether to draw Base and Dresser buttons
-            bool shouldDrawBaseButtons = false;
-            bool shouldDrawDresserButtons = false;
-            bool shouldDrawNosesAndFaceButtons = false;
-
             //Draw the dialogue box or else Minerva will haunt my dreams
             Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true);
 
@@ -694,83 +762,25 @@ namespace GetGlam.Framework
             else
             {
                 b.Draw(Game1.daybg, new Vector2(this.xPositionOnScreen + this.width / 2 - 64, this.yPositionOnScreen + this.height / 2 - 64), Color.White);
-                if (shouldDrawDresserButtons)
+                if (ShouldDrawDresserButtons)
                     b.Draw(Dresser.Texture, new Vector2(NewRightButtonsList[4].bounds.X + 64, NewRightButtonsList[4].bounds.Y), Dresser.TextureSourceRect, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0.86f);
             }
 
             //Draw the Farmer!!!
             Game1.player.FarmerRenderer.draw(b, Game1.player.FarmerSprite.CurrentAnimationFrame, Game1.player.FarmerSprite.CurrentFrame, Game1.player.FarmerSprite.SourceRect, new Vector2((this.xPositionOnScreen + this.width / 2 - 32), (this.yPositionOnScreen + this.height / 2 - 32)), Vector2.Zero, 0.8f, Color.White, 0f, 1f, Game1.player);
 
-            //Check if the menu should draw the base buttons if the base count is greater than 1
-            if (Game1.player.isMale && PackHelper.MaleBaseTextureList.Count > 0)
-                shouldDrawBaseButtons = true;
-            else if (PackHelper.FemaleBaseTextureList.Count > 0)
-                shouldDrawBaseButtons = true;
-
-            //Check if the menu should draw the dresser buttons
-            if (Dresser.GetNumberOfDressers() > 1)
-                shouldDrawDresserButtons = true;
-
-            if (PackHelper.GetNumberOfFacesAndNoses(Game1.player.isMale, BaseIndex, true) > 0)
-            {
-                shouldDrawNosesAndFaceButtons = true;
-                UpdateFaceAndNoseButtonsPositions(shouldDrawNosesAndFaceButtons);
-            }
-            else
-            {
-                shouldDrawNosesAndFaceButtons = false;
-                UpdateFaceAndNoseButtonsPositions(shouldDrawNosesAndFaceButtons);
-            }
-
             //Draw the add to favorites button and the text
             AddToFavoritesButton.draw(b);
             Utility.drawTextWithShadow(b, "Add Fav:", Game1.smallFont, new Vector2(AddToFavoritesButton.bounds.X - 112, AddToFavoritesButton.bounds.Y + 8), Game1.textColor);
 
-            //Draw each of the left selection buttons
-            foreach (ClickableTextureComponent component in this.leftSelectionButtons)
-            {
-                if(!component.name.Contains("Pet"))
-                    component.draw(b);
-            }
-            
-            //Draw each of the right selection buttons
-            foreach (ClickableTextureComponent component in this.rightSelectionButtons)
-            {
-                if(!component.name.Contains("Pet"))
-                    component.draw(b);
-            }
-
-            //Draw each of the labels
-            foreach (ClickableComponent component in this.labels)
-            {
-                //Check if Pet is null, this will crash the game if this isn't here
-                if (Pet is null)
-                {
-                    if (!component.name.Contains("Fav") && !component.name.Contains("Name") && !component.name.Contains("Farm") && !component.name.Contains("animal"))
-                        Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
-                }
-                else
-                {
-                    if (!component.name.Contains("Fav") && !component.name.Contains("Name") && !component.name.Contains("Farm") && !component.name.Contains("animal") && !component.name.Contains(Pet.Name))
-                        Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
-                }
-
-                //Only draw the needed labels
-                if (component.name.Contains("Hair") && !component.name.Contains("Color"))
-                    Utility.drawTextWithShadow(b, Game1.player.hair.Get().ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
-                else if (component.name.Contains("Acc"))
-                    Utility.drawTextWithShadow(b, Game1.player.accessory.Get() == -1 ? "na" : Game1.player.accessory.Value.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
-                else if (component.name.Contains("Skin"))
-                    Utility.drawTextWithShadow(b, Game1.player.skin.Get().ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
-            }
-
             //Draw the eye color picker and hair color picker
-            this.eyeColorPicker.draw(b);
-            this.hairColorPicker.draw(b);
+            EyeColorPicker.draw(b);
+            HairColorPicker.draw(b);
 
             //Check if the player is wearing a hat
             if (Game1.player.hat.Value != null)
             {
+                HatCoversHairButton.visible = true;
                 HatCoversHairButton.draw(b);
                 Utility.drawTextWithShadow(b, HatFixLabel.name, Game1.smallFont, new Vector2(HatFixLabel.bounds.X, HatFixLabel.bounds.Y), Game1.textColor);
 
@@ -781,11 +791,11 @@ namespace GetGlam.Framework
             //Draw each of the new left buttons
             foreach (ClickableTextureComponent component in NewLeftButtonsList)
             {
-                if (component.name.Contains("Base") && shouldDrawBaseButtons)
+                if (component.name.Contains("Base") && ShouldDrawBaseButtons)
                     component.draw(b);
-                else if (component.name.Contains("Dresser") && shouldDrawDresserButtons)
+                else if (component.name.Contains("Dresser") && ShouldDrawDresserButtons)
                     component.draw(b);
-                else if ((component.name.Contains("Nose") || component.name.Contains("Face") && shouldDrawNosesAndFaceButtons))
+                else if ((component.name.Contains("Nose") || component.name.Contains("Face") && ShouldDrawNosesAndFaceButtons))
                     component.draw(b);
                 else if (!component.name.Contains("Dresser") && !component.name.Contains("Base") && !component.name.Contains("Face") && !component.name.Contains("Nose"))
                     component.draw(b);
@@ -794,11 +804,11 @@ namespace GetGlam.Framework
             //Draw each of the new right buttons
             foreach (ClickableTextureComponent component in NewRightButtonsList)
             {
-                if (component.name.Contains("Base") && shouldDrawBaseButtons)
+                if (component.name.Contains("Base") && ShouldDrawBaseButtons)
                     component.draw(b);
-                else if (component.name.Contains("Dresser") && shouldDrawDresserButtons)
+                else if (component.name.Contains("Dresser") && ShouldDrawDresserButtons)
                     component.draw(b);
-                else if ((component.name.Contains("Nose") || component.name.Contains("Face") && shouldDrawNosesAndFaceButtons))
+                else if ((component.name.Contains("Nose") || component.name.Contains("Face") && ShouldDrawNosesAndFaceButtons))
                     component.draw(b);
                 else if (!component.name.Contains("Dresser") && !component.name.Contains("Base") && !component.name.Contains("Face") && !component.name.Contains("Nose"))
                     component.draw(b);
@@ -807,17 +817,17 @@ namespace GetGlam.Framework
             //Draw each of the new labels, I hate this tbh, this might needs to be done a different way
             foreach (ClickableComponent component in NewLabels)
             {
-                if (component.name.Equals("Base") && shouldDrawBaseButtons)
+                if (component.name.Equals("Base") && ShouldDrawBaseButtons)
                 {
                     Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
                     Utility.drawTextWithShadow(b, BaseIndex.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
                 }
-                else if (component.name.Equals("Face") && shouldDrawNosesAndFaceButtons)
+                else if (component.name.Equals("Face") && ShouldDrawNosesAndFaceButtons)
                 {
                     Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
                     Utility.drawTextWithShadow(b, FaceIndex.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
                 }
-                else if (component.name.Equals("Nose") && shouldDrawNosesAndFaceButtons)
+                else if (component.name.Equals("Nose") && ShouldDrawNosesAndFaceButtons)
                 {
                     Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
                     Utility.drawTextWithShadow(b, NoseIndex.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
@@ -827,14 +837,33 @@ namespace GetGlam.Framework
                     Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
                     Utility.drawTextWithShadow(b, ShoeIndex.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
                 }
-                else if (component.name.Equals("Dresser") && shouldDrawDresserButtons)
+                else if (component.name.Equals("Hair"))
+                {
+                    Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
+                    Utility.drawTextWithShadow(b, Game1.player.hair.Value.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
+                }
+                else if (component.name.Equals("Skin"))
+                {
+                    Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
+                    Utility.drawTextWithShadow(b, Game1.player.skin.Value.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
+                }
+                else if (component.name.Equals("Acc."))
+                {
+                    Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
+                    Utility.drawTextWithShadow(b, Game1.player.accessory.Value == -1 ? "na" : Game1.player.accessory.Value.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
+                }
+                else if (component.name.Equals("Eye Color:") || component.name.Equals("Hair Color:"))
+                {
+                    Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
+                }
+                else if (component.name.Equals("Dresser") && ShouldDrawDresserButtons)
                 {
                     Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
                 }
             }
 
             //Draw the gender buttons
-            foreach (ClickableTextureComponent component in this.genderButtons)
+            foreach (ClickableTextureComponent component in GenderButtons)
             {
                 component.draw(b);
                 if (component.name.Equals("Male") && Game1.player.isMale || (component.name.Equals("Female") && !Game1.player.isMale))
@@ -842,7 +871,7 @@ namespace GetGlam.Framework
             }
 
             //Draw the ok button and cancel button
-            this.okButton.draw(b);
+            OkButton.draw(b);
             CancelButton.draw(b);
 
             //Lastly, draw the mouse if they're not using the hardware cursor
