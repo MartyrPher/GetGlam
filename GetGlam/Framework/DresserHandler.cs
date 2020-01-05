@@ -97,7 +97,7 @@ namespace GetGlam.Framework
                 return;
 
             //Grab the tilesheet from the farmhouse and Load it
-            TileSheet dresserTileSheet = FarmHouse.map.GetTileSheet("Dresser");
+            TileSheet dresserTileSheet = FarmHouse.map.GetTileSheet("z_Dresser");
             FarmHouse.map.LoadTileSheets(Game1.mapDisplayDevice);
 
             //Grab the building layer and Front layer from the farmhouse map
