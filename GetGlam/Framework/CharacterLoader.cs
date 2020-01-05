@@ -79,7 +79,11 @@ namespace GetGlam.Framework
                 return;
 
             //Update the dresser
-            Dresser.TextureSourceRect.Y = currentPlayerStyle.DresserIndex.Equals(1) ? 0 : currentPlayerStyle.DresserIndex * 32 - 32;
+            if (Dresser.Texture.Height == 32)
+                Dresser.TextureSourceRect.Y = 0;
+            else
+                Dresser.TextureSourceRect.Y = currentPlayerStyle.DresserIndex.Equals(1) ? 0 : currentPlayerStyle.DresserIndex * 32 - 32;
+
             Dresser.SetDresserTileSheetPoint(currentPlayerStyle.DresserIndex);
 
             if (!currentPlayerStyle.IsDefault)
