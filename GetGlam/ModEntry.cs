@@ -100,17 +100,17 @@ namespace GetGlam
         /// <param name="e">The Save Loaded Event arguement</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+            //Set up the Dresser and Place it
+            Dresser.FarmHouse = Game1.getLocationFromName("FarmHouse");
+            Dresser.SetDresserTexture();
+            Dresser.PlaceDresser();
+
             //Create the Menus and set the var in DresserHandler
             Menu = new GlamMenu(this, Config, PackHelper, Dresser, PlayerLoader);
             Dresser.Menu = Menu;
 
             //Load the character
             PlayerLoader.LoadCharacterLayout(Menu);
-
-            //Set up the Dresser and Place it
-            Dresser.FarmHouse = Game1.getLocationFromName("FarmHouse");
-            Dresser.SetDresserTexture();
-            Dresser.PlaceDresser();
         }
 
         /// <summary>Event that is called when the game launches.</summary>
