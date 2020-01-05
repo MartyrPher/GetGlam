@@ -1,5 +1,4 @@
 ﻿using GetGlam.Framework.DataModels;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 using System.Collections.Generic;
@@ -101,7 +100,14 @@ namespace GetGlam.Framework
 
             //Add the favorites to the favorites list
             if (currentPlayerStyle.Favorites == null)
-                Favorites = new List<FavoriteModel>();
+            {
+                FavoriteModel model = new FavoriteModel();
+                for (int i = 0; i < 40; i++)
+                {
+                    currentPlayerStyle.Favorites[i] = model;
+                    Favorites.Add(model);
+                }
+            }
             else
             {
                 foreach (FavoriteModel model in currentPlayerStyle.Favorites)
@@ -207,6 +213,9 @@ namespace GetGlam.Framework
             favModel.ShoeIndex = shoesIndex;
             favModel.AccessoryIndex = accessoryIndex;
             favModel.IsBald = isBald;
+
+            favModel.EyeColor = Game1.player.newEyeColor.Value;
+            favModel.HairColor = Game1.player.hairstyleColor.Value;
 
             //Check if there is an emtpy spot in the favorites list
             for (int i = 0; i < 40; i++)
