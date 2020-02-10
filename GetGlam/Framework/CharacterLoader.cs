@@ -61,9 +61,6 @@ namespace GetGlam.Framework
             currentPlayerStyle.IsBald = isBald;
             currentPlayerStyle.HairColor = Game1.player.hairstyleColor.Get();
             currentPlayerStyle.EyeColor = Game1.player.newEyeColor.Get();
-            //currentPlayerStyle.ShirtIndex = Game1.player.shirt.Get();
-            //currentPlayerStyle.PantsIndex = Game1.player.pants.Get();
-            //currentPlayerStyle.PantsColor = Game1.player.pantsColor.Get();
             currentPlayerStyle.Favorites = Favorites;
 
             //Write the favorite model to a json
