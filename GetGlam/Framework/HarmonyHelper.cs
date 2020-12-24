@@ -76,13 +76,23 @@ namespace GetGlam.Framework
             );
         }
 
+        /// <summary>
+        /// Patches SpaceCore for extended hairstyles.
+        /// </summary>
         public void SpaceCorePatchHairStyles()
         {
             Assembly spaceCoreAssembly = GetSpaceCoreAssembly();
             MethodInfo registerTileSheet = spaceCoreAssembly.GetType("SpaceCore.TileSheetExtensions").GetMethod("RegisterExtendedTileSheet");
             registerTileSheet.Invoke(null, new object[] { "Characters\\Farmer\\hairstyles", 96 });
         }
-
+        
+        /// <summary>
+        /// Patches SpaceCore extended tilesheets.
+        /// </summary>
+        /// <param name="asset"> The asset to change.</param>
+        /// <param name="sourceTexture"> The source texture.</param>
+        /// <param name="sourceRect"> Source Rectangle of source texture.</param>
+        /// <param name="targetRect"> Source Rectangle of target texture.</param>
         public void SpaceCorePatchExtendedTileSheet(IAssetDataForImage asset, Texture2D sourceTexture, Rectangle sourceRect, Rectangle targetRect)
         {
             Assembly spaceCoreAssembly = GetSpaceCoreAssembly();
@@ -90,6 +100,10 @@ namespace GetGlam.Framework
             patchExtendedTileSheet.Invoke(null, new object[] { asset, sourceTexture, sourceRect, targetRect, PatchMode.Replace });
         }
 
+        /// <summary>
+        /// Gets the SpaceCore Assembly.
+        /// </summary>
+        /// <returns> The SpaceCore Assembly.</returns>
         private Assembly GetSpaceCoreAssembly()
         {
             IModInfo modData = Entry.Helper.ModRegistry.Get("spacechase0.SpaceCore");
@@ -97,6 +111,9 @@ namespace GetGlam.Framework
             return spaceCoreInstance.GetType().Assembly;
         }
 
+        /// <summary>
+        /// Creates an Instance of the CustomizeAnywhere Menu.
+        /// </summary>
         public void CustomizeAnywhereClothingMenu()
         {
             var modData = Entry.Helper.ModRegistry.Get("Cherry.CustomizeAnywhere");
