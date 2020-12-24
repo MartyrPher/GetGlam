@@ -555,7 +555,7 @@ namespace GetGlam.Framework
             if (Entry.IsCustomizeAnywhereInstalled)
             {
                 if (ClothingTab.containsPoint(x, y))
-                    Entry.CustomizeAnywhereClothingMenu();
+                    Entry.HarmonyHelper.CustomizeAnywhereClothingMenu();
             }
 
             //Check if the search tab has been clicked
