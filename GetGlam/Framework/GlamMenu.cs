@@ -532,7 +532,7 @@ namespace GetGlam.Framework
             //Check the okbutton again to save the player when the menu closes
             if (OkButton.containsPoint(x, y))
             {
-                PlayerLoader.SaveCharacterLayout(Game1.player.isMale, BaseIndex, Game1.player.skin.Value, Game1.player.hair.Value, FaceIndex, NoseIndex, ShoeIndex, Game1.player.accessory.Value, DresserIndex, IsBald);
+                PlayerLoader.SaveCharacterLayout(BaseIndex, FaceIndex, NoseIndex, ShoeIndex, DresserIndex, IsBald);
                 Game1.exitActiveMenu();
                 Game1.flashAlpha = 1f;
                 Game1.playSound("yoba");
