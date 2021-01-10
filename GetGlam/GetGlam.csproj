@@ -55,6 +55,7 @@
     <Compile Include="Framework\CharacterLoader.cs" />
     <Compile Include="Framework\ContentLoader.cs" />
     <Compile Include="Framework\ContentLoaders\AccessoryLoader.cs" />
+    <Compile Include="Framework\ContentLoaders\BaseLoader.cs" />
     <Compile Include="Framework\ContentLoaders\HairLoader.cs" />
     <Compile Include="Framework\ContentPackHelper.cs" />
     <Compile Include="Framework\DataModels\AccessoryModel.cs" />
