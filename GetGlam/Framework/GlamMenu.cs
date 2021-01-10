@@ -792,17 +792,17 @@ namespace GetGlam.Framework
                     PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "LeftChangeHair":
-                    if (Game1.player.hair.Get().Equals(0) && PackHelper.NumberOfHairstlyesAdded == 56)
+                    if (Game1.player.hair.Get().Equals(0) && PackHelper.NumberOfHairstlyesAdded == 74)
                         Game1.player.hair.Set(FarmerRenderer.hairStylesTexture.Height / 96 * 8 - 1);
-                    else if (Game1.player.hair.Get().Equals(0) && PackHelper.NumberOfHairstlyesAdded != 56)
+                    else if (Game1.player.hair.Get().Equals(0) && PackHelper.NumberOfHairstlyesAdded != 74)
                         Game1.player.hair.Set(PackHelper.NumberOfHairstlyesAdded - 1);
                     else
                         Game1.player.hair.Set(Game1.player.hair.Value + direction);
                     break;   
                 case "RightChangeHair":
-                    if (PackHelper.NumberOfHairstlyesAdded == 56 && Game1.player.hair.Value + 1 > FarmerRenderer.hairStylesTexture.Height / 96 * 8 - 1)
+                    if (PackHelper.NumberOfHairstlyesAdded == 74 && Game1.player.hair.Value + 1 > FarmerRenderer.hairStylesTexture.Height / 96 * 8 - 1)
                         Game1.player.hair.Set(0);
-                    else if (PackHelper.NumberOfHairstlyesAdded != 56 && Game1.player.hair.Value.Equals(PackHelper.NumberOfHairstlyesAdded - 1))
+                    else if (PackHelper.NumberOfHairstlyesAdded != 74 && Game1.player.hair.Value.Equals(PackHelper.NumberOfHairstlyesAdded - 1))
                         Game1.player.hair.Set(0);
                     else
                         Game1.player.hair.Set(Game1.player.hair.Value + direction);

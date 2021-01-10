@@ -77,7 +77,7 @@ namespace GetGlam.Framework
             if (asset.AssetNameEquals("Characters\\Farmer\\hairstyles"))
             {
                 //Don't edit if they have no hair content packs
-                if (PackHelper.NumberOfHairstlyesAdded == 56)
+                if (PackHelper.NumberOfHairstlyesAdded == 74)
                     return;
 
                 //Create a new texture and set it as the old one
