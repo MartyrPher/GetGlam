@@ -112,7 +112,6 @@ namespace GetGlam.Framework
             foreach (IContentPack contentPack in Entry.Helper.ContentPacks.GetOwned())
             {
                 Entry.Monitor.Log($"Reading content pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version}", LogLevel.Trace);
-                DirectoryInfo baseDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Base"));
                 DirectoryInfo dresserDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Dresser"));
                 DirectoryInfo shoeDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Shoes"));
                 DirectoryInfo faceAndNoseDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "FaceAndNose"));
@@ -120,27 +119,7 @@ namespace GetGlam.Framework
 
                 LoadHair(contentPack);
                 LoadAccessories(contentPack);
-
-                //If the base directory exists
-                if (baseDirectory.Exists)
-                {
-                    //Loop through each file in the folder
-                    foreach (FileInfo file in baseDirectory.EnumerateFiles())
-                    {
-                        //Check the name if the file and load the texture into the relevant list
-                        if (file.Name.Contains("farmer_girl_base.png"))
-                            FemaleBaseTextureList.Add(contentPack.LoadAsset<Texture2D>("Base/farmer_girl_base.png"));
-                        else if (file.Name.Contains("farmer_base.png"))
-                            MaleBaseTextureList.Add(contentPack.LoadAsset<Texture2D>("Base/farmer_base.png"));
-                        else if (file.Name.Contains("bald"))
-                        {
-                            if (file.Name.Contains("girl_base_bald"))
-                                FemaleBaseBaldTextureList.Add(contentPack.LoadAsset<Texture2D>("Base/farmer_girl_base_bald.png"));
-                            else if (file.Name.Contains("farmer_base_bald"))
-                                MaleBaseBaldTextureList.Add(contentPack.LoadAsset<Texture2D>("Base/farmer_base_bald.png"));
-                        }
-                    }
-                }
+                LoadBase(contentPack);
 
                 //If the dresser directory exists
                 if (dresserDirectory.Exists)
@@ -240,9 +219,12 @@ namespace GetGlam.Framework
                 }
             }
 
+            Entry.Monitor.Log($"Number of Hairstyles Added: {NumberOfHairstlyesAdded}", LogLevel.Alert);
+
             //Add ImageInjector to the Asset Editor to start patching the images
             Entry.Helper.Content.AssetEditors.Add(new ImageInjector(Entry, this));
         }
+
 
         /// <summary>
         /// Loads the Hair for a Content Pack.
@@ -264,6 +246,12 @@ namespace GetGlam.Framework
         {
             AccessoryLoader accessoryLoader = new AccessoryLoader(Entry, contentPack, this);
             accessoryLoader.LoadAccessory();
+        }
+
+        private void LoadBase(IContentPack contentPack)
+        {
+            BaseLoader baseLoader = new BaseLoader(Entry, contentPack, this);
+            baseLoader.LoadBase();
         }
 
         /// <summary>Gets the number of faces and noses for a base texture</summary>
