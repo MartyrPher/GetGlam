@@ -244,27 +244,26 @@ namespace GetGlam.Framework
             Entry.Helper.Content.AssetEditors.Add(new ImageInjector(Entry, this));
         }
 
-        private void LoadAccessories(IContentPack contentPack)
-        {
-            AccessoryLoader accessoryLoader = new AccessoryLoader(Entry, contentPack);
-            accessoryLoader.LoadAccessory();
-
-            NumberOfAccessoriesAdded += accessoryLoader.GetAccessoryModel().NumberOfAccessories;
-
-            //Add the accessory to the accessory list
-            AccessoryList.Add(accessoryLoader.GetAccessoryModel());
-        }
-
+        /// <summary>
+        /// Loads the Hair for a Content Pack.
+        /// </summary>
+        /// <param name="contentPack">The current Content Pack.</param>
         private void LoadHair(IContentPack contentPack)
         {
-            HairLoader hairLoader = new HairLoader(Entry, contentPack);
+            HairLoader hairLoader = new HairLoader(Entry, contentPack, this);
             hairLoader.LoadHair();
 
-            HairStyleSearch.Add(contentPack.Manifest.Name, NumberOfHairstlyesAdded);
-            NumberOfHairstlyesAdded += hairLoader.GetHairModel().NumberOfHairstyles;
+            HairStyleSearch.Add(contentPack.Manifest.Name, NumberOfHairstlyesAdded); 
+        }
 
-            //Add the hair model to the list
-            HairList.Add(hairLoader.GetHairModel());
+        /// <summary>
+        /// Loads the accessories for a Content Pack.
+        /// </summary>
+        /// <param name="contentPack">The current Content Pack.</param>
+        private void LoadAccessories(IContentPack contentPack)
+        {
+            AccessoryLoader accessoryLoader = new AccessoryLoader(Entry, contentPack, this);
+            accessoryLoader.LoadAccessory();
         }
 
         /// <summary>Gets the number of faces and noses for a base texture</summary>

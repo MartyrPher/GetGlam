@@ -19,16 +19,20 @@ namespace GetGlam.Framework.ContentLoaders
         // Current content pack being looked at
         private IContentPack CurrentContentPack;
 
+        // Instance of ContentPackHelper
+        private ContentPackHelper PackHelper;
+
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="modEntry">Instance of ModEntry</param>
         /// <param name="contentPack">Current content pack</param>
-        public HairLoader(ModEntry modEntry, IContentPack contentPack)
+        public HairLoader(ModEntry modEntry, IContentPack contentPack, ContentPackHelper packHelper)
         {
             HairDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Hairstyles"));
             Entry = modEntry;
             CurrentContentPack = contentPack;
+            PackHelper = packHelper;
         }
         
         /// <summary>
@@ -42,21 +46,14 @@ namespace GetGlam.Framework.ContentLoaders
                 {
                     CreateNewHairModel();
                     SetHairModelVariables();
+                    AddNumberOfHairstyles();
+                    AddHairToHairList();
                 }
             }
             catch 
             {
                 Entry.Monitor.Log($"{CurrentContentPack.Manifest.Name} hairstyles is empty. This pack was not added.", LogLevel.Warn);
             }
-        }
-
-        /// <summary>
-        /// Get the current hair model.
-        /// </summary>
-        /// <returns>The hair model</returns>
-        public HairModel GetHairModel()
-        {
-            return Hair;
         }
 
         /// <summary>
@@ -84,6 +81,22 @@ namespace GetGlam.Framework.ContentLoaders
         {
             Hair.TextureHeight = Hair.Texture.Height;
             Hair.ModName = CurrentContentPack.Manifest.Name;
+        }
+
+        /// <summary>
+        /// Adds number of hairstyles from the Content Pack.
+        /// </summary>
+        private void AddNumberOfHairstyles()
+        {
+            PackHelper.NumberOfHairstlyesAdded += Hair.NumberOfHairstyles;
+        }
+
+        /// <summary>
+        /// Adds hair model to the hair list.
+        /// </summary>
+        private void AddHairToHairList() 
+        {
+            PackHelper.HairList.Add(Hair);
         }
     }
 }

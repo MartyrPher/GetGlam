@@ -19,20 +19,24 @@ namespace GetGlam.Framework.ContentLoaders
         // Accessory Model
         private AccessoryModel Accessory;
 
+        // Instance of ContentPackHelper
+        private ContentPackHelper PackHelper;
+
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="modEntry">Instance of ModEntry</param>
         /// <param name="contentPack">Current Content Pack</param>
-        public AccessoryLoader(ModEntry modEntry, IContentPack contentPack)
+        public AccessoryLoader(ModEntry modEntry, IContentPack contentPack, ContentPackHelper packHelper)
         {
             AccessoriesDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Accessories"));
             Entry = modEntry;
             CurrentContentPack = contentPack;
+            PackHelper = packHelper;
         }
         
         /// <summary>
-        /// Loads a accessory from a Content Pack.
+        /// Loads an accessory from a Content Pack.
         /// </summary>
         public void LoadAccessory()
         {
@@ -42,6 +46,8 @@ namespace GetGlam.Framework.ContentLoaders
                 {
                     CreateAccessoryModel();
                     SetAccessoryModelVariables();
+                    AddNumberOfAccessories();
+                    AddAccessoryToAccessoryList();
                 }
             }
             catch
@@ -84,6 +90,22 @@ namespace GetGlam.Framework.ContentLoaders
         {
             Accessory.TextureHeight = Accessory.Texture.Height;
             Accessory.ModName = CurrentContentPack.Manifest.Name;
+        }
+
+        /// <summary>
+        /// Adds number of accessories from the Content Pack.
+        /// </summary>
+        private void AddNumberOfAccessories()
+        {
+            PackHelper.NumberOfHairstlyesAdded += Accessory.NumberOfAccessories;
+        }
+
+        /// <summary>
+        /// Adds accessory model to the accessory list.
+        /// </summary>
+        private void AddAccessoryToAccessoryList()
+        {
+            PackHelper.AccessoryList.Add(Accessory);
         }
     }
 }
