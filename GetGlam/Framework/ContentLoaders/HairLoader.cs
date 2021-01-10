@@ -40,17 +40,21 @@ namespace GetGlam.Framework.ContentLoaders
         /// </summary>
         public void LoadHair()
         {
-            try
+            if (DoesHairDirectoryExists())
             {
-                if (DoesHairDirectoryExists())
+                try
                 {
                     CreateNewHairModel();
                     SetHairModelVariables();
                     AddNumberOfHairstyles();
                     AddHairToHairList();
                 }
+                catch
+                {
+                    Entry.Monitor.Log($"{CurrentContentPack.Manifest.Name} hairstyles is empty. This pack was not added.", LogLevel.Warn);
+                }
             }
-            catch 
+            else 
             {
                 Entry.Monitor.Log($"{CurrentContentPack.Manifest.Name} hairstyles is empty. This pack was not added.", LogLevel.Warn);
             }
