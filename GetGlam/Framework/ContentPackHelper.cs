@@ -1,4 +1,5 @@
-﻿using GetGlam.Framework.DataModels;
+﻿using GetGlam.Framework.ContentLoaders;
+using GetGlam.Framework.DataModels;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
@@ -9,7 +10,9 @@ using System.IO;
 
 namespace GetGlam.Framework
 {
-    /// <summary>Class that handles loading Content Packs and changing base textures.</summary>
+    /// <summary>
+    /// Class that handles loading Content Packs and changing base textures.
+    /// </summary>
     public class ContentPackHelper
     {
         //Instance of ModEntry
@@ -81,88 +84,42 @@ namespace GetGlam.Framework
         //Whether the player is bald
         public bool IsBald = false;
 
-        //Number of hairstyles added by content packs including default hairs
-        public int NumberOfHairstlyesAdded = 56;
+        // Number of hairstyles added by content packs including default hairs
+        public int NumberOfHairstlyesAdded = 74;
 
-        //Number of accessories added by content packs including default accessories
+        // Number of accessories added by content packs including default accessories
         public static int NumberOfAccessoriesAdded = 19;
 
         public Dictionary<string, int> HairStyleSearch = new Dictionary<string, int>();
 
-        /// <summary>ContentPackHelpers Contructor</summary>
+        /// <summary>
+        /// ContentPackHelpers Contructor.
+        /// </summary>
         /// <param name="entry">An instance of <see cref="ModEntry"/></param>
         public ContentPackHelper(ModEntry entry)
         {
-            //Set the var to the instance
+            // Set the var to the instance
             Entry = entry;
             HairStyleSearch.Add("Default", 0);
         }
 
-        /// <summary>Reads all the content packs for the mod</summary>
+        /// <summary>
+        /// Reads all the content packs for the mod.
+        /// </summary>
         public void ReadContentPacks()
         {
-            //Loop through each content pack
+            // Loop through each content pack
             foreach (IContentPack contentPack in Entry.Helper.ContentPacks.GetOwned())
             {
-                //Create new Directory infos for all the different folders
                 Entry.Monitor.Log($"Reading content pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version}", LogLevel.Trace);
-                DirectoryInfo hairDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Hairstyles"));
-                DirectoryInfo accessoriesDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Accessories"));
                 DirectoryInfo baseDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Base"));
                 DirectoryInfo dresserDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Dresser"));
                 DirectoryInfo shoeDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Shoes"));
                 DirectoryInfo faceAndNoseDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "FaceAndNose"));
                 DirectoryInfo skinColorDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "SkinColor"));
 
-                //If the hair directory exists
-                if (hairDirectory.Exists)
-                {
-                    HairModel hair;
-                    try
-                    {
-                        //Create a new hair model
-                        hair = contentPack.ReadJsonFile<HairModel>("Hairstyles/hairstyles.json");
-                        hair.Texture = contentPack.LoadAsset<Texture2D>("Hairstyles/hairstyles.png");
-
-                        //Set the vars in the hair model
-                        hair.TextureHeight = hair.Texture.Height;
-                        hair.ModName = contentPack.Manifest.Name;
-
-                        HairStyleSearch.Add(contentPack.Manifest.Name, NumberOfHairstlyesAdded);
-                        NumberOfHairstlyesAdded += hair.NumberOfHairstyles;
-
-                        //Add the hair model to the list
-                        HairList.Add(hair);
-                    }
-                    catch
-                    {
-                        Entry.Monitor.Log($"{contentPack.Manifest.Name} hairstyles is emtpy. This pack was not added", LogLevel.Warn);
-                    }
-                }
-
-                //If the accessories directory exists
-                if (accessoriesDirectory.Exists)
-                {
-                    AccessoryModel accessory;
-                    try
-                    {
-                        //Create the new accessory model
-                        accessory = contentPack.ReadJsonFile<AccessoryModel>("Accessories/accessories.json");
-                        accessory.Texture = contentPack.LoadAsset<Texture2D>("Accessories/accessories.png");
-
-                        //Set the vars in the accessory model
-                        accessory.TextureHeight = accessory.Texture.Height;
-                        accessory.ModName = contentPack.Manifest.Name;
-                        NumberOfAccessoriesAdded += accessory.NumberOfAccessories;
-
-                        //Add the accessory to the accessory list
-                        AccessoryList.Add(accessory);
-                    }
-                    catch
-                    {
-                        Entry.Monitor.Log($"{contentPack.Manifest.Name} accessories is emtpy. This pack was not added", LogLevel.Warn);
-                    }
-                }
+                LoadHair(contentPack);
+                LoadAccessories(contentPack);
 
                 //If the base directory exists
                 if (baseDirectory.Exists)
@@ -181,10 +138,10 @@ namespace GetGlam.Framework
                                 FemaleBaseBaldTextureList.Add(contentPack.LoadAsset<Texture2D>("Base/farmer_girl_base_bald.png"));
                             else if (file.Name.Contains("farmer_base_bald"))
                                 MaleBaseBaldTextureList.Add(contentPack.LoadAsset<Texture2D>("Base/farmer_base_bald.png"));
-                        }         
+                        }
                     }
                 }
-        
+
                 //If the dresser directory exists
                 if (dresserDirectory.Exists)
                 {
@@ -204,7 +161,7 @@ namespace GetGlam.Framework
                     }
                     catch
                     {
-                        Entry.Monitor.Log($"{contentPack.Manifest.Name} dressers is emtpy. This pack was not added", LogLevel.Warn);
+                        Entry.Monitor.Log($"{contentPack.Manifest.Name} dressers is empty. This pack was not added", LogLevel.Warn);
                     }
 
                 }
@@ -255,7 +212,7 @@ namespace GetGlam.Framework
                     }
                     catch
                     {
-                        Entry.Monitor.Log($"{contentPack.Manifest.Name} faces and noses is emtpy. This pack was not added", LogLevel.Warn);
+                        Entry.Monitor.Log($"{contentPack.Manifest.Name} faces and noses is empty. This pack was not added", LogLevel.Warn);
                     }
                 }
 
@@ -285,6 +242,29 @@ namespace GetGlam.Framework
 
             //Add ImageInjector to the Asset Editor to start patching the images
             Entry.Helper.Content.AssetEditors.Add(new ImageInjector(Entry, this));
+        }
+
+        private void LoadAccessories(IContentPack contentPack)
+        {
+            AccessoryLoader accessoryLoader = new AccessoryLoader(Entry, contentPack);
+            accessoryLoader.LoadAccessory();
+
+            NumberOfAccessoriesAdded += accessoryLoader.GetAccessoryModel().NumberOfAccessories;
+
+            //Add the accessory to the accessory list
+            AccessoryList.Add(accessoryLoader.GetAccessoryModel());
+        }
+
+        private void LoadHair(IContentPack contentPack)
+        {
+            HairLoader hairLoader = new HairLoader(Entry, contentPack);
+            hairLoader.LoadHair();
+
+            HairStyleSearch.Add(contentPack.Manifest.Name, NumberOfHairstlyesAdded);
+            NumberOfHairstlyesAdded += hairLoader.GetHairModel().NumberOfHairstyles;
+
+            //Add the hair model to the list
+            HairList.Add(hairLoader.GetHairModel());
         }
 
         /// <summary>Gets the number of faces and noses for a base texture</summary>
