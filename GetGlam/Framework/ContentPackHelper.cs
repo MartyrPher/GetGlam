@@ -112,88 +112,14 @@ namespace GetGlam.Framework
             foreach (IContentPack contentPack in Entry.Helper.ContentPacks.GetOwned())
             {
                 Entry.Monitor.Log($"Reading content pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version}", LogLevel.Trace);
-                DirectoryInfo dresserDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Dresser"));
-                DirectoryInfo shoeDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Shoes"));
-                DirectoryInfo faceAndNoseDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "FaceAndNose"));
                 DirectoryInfo skinColorDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "SkinColor"));
 
                 LoadHair(contentPack);
                 LoadAccessories(contentPack);
                 LoadBase(contentPack);
-
-                //If the dresser directory exists
-                if (dresserDirectory.Exists)
-                {
-                    //Create a new dresser model
-                    DresserModel dresser;
-                    try
-                    {
-                        dresser = new DresserModel();
-                        dresser.Texture = contentPack.LoadAsset<Texture2D>("Dresser/dresser.png");
-
-                        //Set the vars of the Dresser model
-                        dresser.TextureHeight = dresser.Texture.Height;
-                        dresser.ModName = contentPack.Manifest.Name;
-
-                        //Add the dresser model to the dresser model list
-                        DresserList.Add(dresser);
-                    }
-                    catch
-                    {
-                        Entry.Monitor.Log($"{contentPack.Manifest.Name} dressers is empty. This pack was not added", LogLevel.Warn);
-                    }
-
-                }
-
-                //If the shoe directory exists
-                if (shoeDirectory.Exists)
-                {
-                    //Loop through each file and add the relevant texture to the Shoe list
-                    foreach (FileInfo file in shoeDirectory.EnumerateFiles())
-                    {
-                        //Always going to find the female shoes first
-                        if (file.Name.Contains("female_shoes"))
-                            FemaleShoeTextureList.Add(contentPack.LoadAsset<Texture2D>(Path.Combine("Shoes", file.Name)));
-                        else if (file.Name.Contains("male_shoes"))
-                            MaleShoeTextureList.Add(contentPack.LoadAsset<Texture2D>(Path.Combine("Shoes", file.Name)));
-                    }
-                }
-
-                //If the Face and Nose directory exists
-                if (faceAndNoseDirectory.Exists)
-                {
-                    try
-                    {
-                        //Create a facenose model and read the json
-                        FaceNoseModel model = contentPack.ReadJsonFile<FaceNoseModel>(Path.Combine("FaceAndNose", "count.json"));
-
-                        //Add the count of faces to the dictionary for the base texture
-                        MaleBaseFaceNoseCount.Add(MaleBaseTextureList[MaleBaseTextureList.Count - 1], new int[] { model.NumberOfMaleFaces, model.NumberOfMaleNoses });
-                        FemaleBaseFaceNoseCount.Add(FemaleBaseTextureList[FemaleBaseTextureList.Count - 1], new int[] { model.NumberOfFemaleFaces, model.NumberOfFemaleNoses });
-
-                        //New dictionaries to be added to the dictionary
-                        Dictionary<string, Texture2D> currentPackMaleFaceNoseDict = new Dictionary<string, Texture2D>();
-                        Dictionary<string, Texture2D> currentPackFemaleFaceNoseDict = new Dictionary<string, Texture2D>();
-
-                        //Load the face and nose textures somewhere
-                        foreach (FileInfo file in faceAndNoseDirectory.EnumerateFiles())
-                        {
-                            //It's always going to find the female faces first
-                            if (file.Name.Contains("female_face"))
-                                currentPackFemaleFaceNoseDict.Add(file.Name, contentPack.LoadAsset<Texture2D>(Path.Combine("FaceAndNose", file.Name)));
-                            else if (file.Name.Contains("male_face"))
-                                currentPackMaleFaceNoseDict.Add(file.Name, contentPack.LoadAsset<Texture2D>(Path.Combine("FaceAndNose", file.Name)));
-                        }
-
-                        //Add it to the Dictionary
-                        MaleFaceAndNoseTextureDict.Add(MaleBaseTextureList[MaleBaseTextureList.Count - 1], currentPackMaleFaceNoseDict);
-                        FemaleFaceAndNoseTextureDict.Add(FemaleBaseTextureList[FemaleBaseTextureList.Count - 1], currentPackFemaleFaceNoseDict);
-                    }
-                    catch
-                    {
-                        Entry.Monitor.Log($"{contentPack.Manifest.Name} faces and noses is empty. This pack was not added", LogLevel.Warn);
-                    }
-                }
+                LoadDresser(contentPack);
+                LoadShoes(contentPack);
+                LoadFaceAndNose(contentPack);
 
                 //If the skin color directory exists
                 if (skinColorDirectory.Exists)
@@ -215,16 +141,12 @@ namespace GetGlam.Framework
                     {
                         Entry.Monitor.Log($"{contentPack.Manifest.Name} skin colors is emtpy. This pack was not added", LogLevel.Warn);
                     }
-
                 }
             }
-
-            Entry.Monitor.Log($"Number of Hairstyles Added: {NumberOfHairstlyesAdded}", LogLevel.Alert);
 
             //Add ImageInjector to the Asset Editor to start patching the images
             Entry.Helper.Content.AssetEditors.Add(new ImageInjector(Entry, this));
         }
-
 
         /// <summary>
         /// Loads the Hair for a Content Pack.
@@ -252,6 +174,24 @@ namespace GetGlam.Framework
         {
             BaseLoader baseLoader = new BaseLoader(Entry, contentPack, this);
             baseLoader.LoadBase();
+        }
+
+        private void LoadDresser(IContentPack contentPack)
+        {
+            DresserLoader dresserLoader = new DresserLoader(Entry, contentPack, this);
+            dresserLoader.LoadDresser();
+        }
+
+        private void LoadShoes(IContentPack contentPack)
+        {
+            ShoeLoader shoeLoader = new ShoeLoader(Entry, contentPack, this);
+            shoeLoader.LoadShoes();
+        }
+
+        private void LoadFaceAndNose(IContentPack contentPack)
+        {
+            FaceNoseLoader faceNoseLoader = new FaceNoseLoader(Entry, contentPack, this);
+            faceNoseLoader.LoadFaceAndNose();
         }
 
         /// <summary>Gets the number of faces and noses for a base texture</summary>
