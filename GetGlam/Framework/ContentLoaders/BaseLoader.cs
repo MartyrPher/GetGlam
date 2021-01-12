@@ -50,7 +50,7 @@ namespace GetGlam.Framework.ContentLoaders
                 }
                 catch
                 {
-                    Entry.Monitor.Log($"{CurrentContentPack.Manifest.Name} bases is empty. This pack was not added", LogLevel.Warn);
+                    Entry.Monitor.Log($"{CurrentContentPack.Manifest.Name} bases is empty. This pack was not added.", LogLevel.Warn);
                 }
             }
         }
