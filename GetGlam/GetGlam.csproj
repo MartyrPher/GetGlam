@@ -56,7 +56,10 @@
     <Compile Include="Framework\ContentLoader.cs" />
     <Compile Include="Framework\ContentLoaders\AccessoryLoader.cs" />
     <Compile Include="Framework\ContentLoaders\BaseLoader.cs" />
+    <Compile Include="Framework\ContentLoaders\DresserLoader.cs" />
+    <Compile Include="Framework\ContentLoaders\FaceNoseLoader.cs" />
     <Compile Include="Framework\ContentLoaders\HairLoader.cs" />
+    <Compile Include="Framework\ContentLoaders\ShoeLoader.cs" />
     <Compile Include="Framework\ContentPackHelper.cs" />
     <Compile Include="Framework\DataModels\AccessoryModel.cs" />
     <Compile Include="Framework\DataModels\SkinColorModel.cs" />
