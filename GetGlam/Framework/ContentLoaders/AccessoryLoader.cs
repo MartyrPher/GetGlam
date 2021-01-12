@@ -40,19 +40,19 @@ namespace GetGlam.Framework.ContentLoaders
         /// </summary>
         public void LoadAccessory()
         {
-            try
+            if (DoesAccessoryDirectoryExist())
             {
-                if (DoesAccessoryDirectoryExist())
+                try
                 {
                     CreateAccessoryModel();
                     SetAccessoryModelVariables();
                     AddNumberOfAccessories();
                     AddAccessoryToAccessoryList();
                 }
-            }
-            catch
-            {
-                Entry.Monitor.Log($"{CurrentContentPack.Manifest.Name} accessories is empty. This pack was not added.", LogLevel.Warn);
+                catch
+                {
+                    Entry.Monitor.Log($"{CurrentContentPack.Manifest.Name} accessories is empty. This pack was not added.", LogLevel.Warn);
+                }
             }
         }
 
@@ -97,7 +97,7 @@ namespace GetGlam.Framework.ContentLoaders
         /// </summary>
         private void AddNumberOfAccessories()
         {
-            PackHelper.NumberOfHairstlyesAdded += Accessory.NumberOfAccessories;
+            ContentPackHelper.NumberOfAccessoriesAdded += Accessory.NumberOfAccessories;
         }
 
         /// <summary>
