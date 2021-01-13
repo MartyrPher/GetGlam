@@ -112,7 +112,6 @@ namespace GetGlam.Framework
             foreach (IContentPack contentPack in Entry.Helper.ContentPacks.GetOwned())
             {
                 Entry.Monitor.Log($"Reading content pack: {contentPack.Manifest.Name} {contentPack.Manifest.Version}", LogLevel.Trace);
-                DirectoryInfo skinColorDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "SkinColor"));
 
                 LoadHair(contentPack);
                 LoadAccessories(contentPack);
@@ -120,28 +119,7 @@ namespace GetGlam.Framework
                 LoadDresser(contentPack);
                 LoadShoes(contentPack);
                 LoadFaceAndNose(contentPack);
-
-                //If the skin color directory exists
-                if (skinColorDirectory.Exists)
-                {
-                    try
-                    {
-                        //Create a new skin color model
-                        SkinColorModel model = new SkinColorModel();
-
-                        //Set the model info
-                        model.Texture = contentPack.LoadAsset<Texture2D>(Path.Combine("SkinColor", "skinColors.png"));
-                        model.TextureHeight = model.Texture.Height;
-                        model.ModName = contentPack.Manifest.Name;
-
-                        //Add the model to the list
-                        SkinColorList.Add(model);
-                    }
-                    catch
-                    {
-                        Entry.Monitor.Log($"{contentPack.Manifest.Name} skin colors is emtpy. This pack was not added", LogLevel.Warn);
-                    }
-                }
+                LoadSkinColor(contentPack);
             }
 
             //Add ImageInjector to the Asset Editor to start patching the images
@@ -170,28 +148,54 @@ namespace GetGlam.Framework
             accessoryLoader.LoadAccessory();
         }
 
+        /// <summary>
+        /// Loads the bases for a Content Pack.
+        /// </summary>
+        /// <param name="contentPack">The current Content Pack.</param>
         private void LoadBase(IContentPack contentPack)
         {
             BaseLoader baseLoader = new BaseLoader(Entry, contentPack, this);
             baseLoader.LoadBase();
         }
 
+        /// <summary>
+        /// Loads the Dresser for a Content Pack.
+        /// </summary>
+        /// <param name="contentPack">The Current Content Pack.</param>
         private void LoadDresser(IContentPack contentPack)
         {
             DresserLoader dresserLoader = new DresserLoader(Entry, contentPack, this);
             dresserLoader.LoadDresser();
         }
 
+        /// <summary>
+        /// Loads shoes from a Content Pack.
+        /// </summary>
+        /// <param name="contentPack">The Current Content Pack.</param>
         private void LoadShoes(IContentPack contentPack)
         {
             ShoeLoader shoeLoader = new ShoeLoader(Entry, contentPack, this);
             shoeLoader.LoadShoes();
         }
 
+        /// <summary>
+        /// Loads Faces and Noses from a Content Pack.
+        /// </summary>
+        /// <param name="contentPack">The Current Content Pack.</param>
         private void LoadFaceAndNose(IContentPack contentPack)
         {
             FaceNoseLoader faceNoseLoader = new FaceNoseLoader(Entry, contentPack, this);
             faceNoseLoader.LoadFaceAndNose();
+        }
+
+        /// <summary>
+        /// Load Skin Color from a Content Pack.
+        /// </summary>
+        /// <param name="contentPack">The Current Content Pack.</param>
+        private void LoadSkinColor(IContentPack contentPack)
+        {
+            SkinColorLoader skinColorLoader = new SkinColorLoader(Entry, contentPack, this);
+            skinColorLoader.LoadSkinColor();
         }
 
         /// <summary>Gets the number of faces and noses for a base texture</summary>
@@ -248,9 +252,9 @@ namespace GetGlam.Framework
 
             //Check if the base is 0, if it's not we want to load the base version
             if (baseIndex != 0)
-                Game1.player.FarmerRenderer.textureName.Set($"GetGlam_{isMale}_{baseIndex}_{faceIndex}_{noseIndex}_{shoeIndex}_isBald{isBald}");
+                Game1.player.FarmerRenderer.textureName.Set($"GetGlam_IsMale:{isMale}_BaseIndex:{baseIndex}_FaceIndex:{faceIndex}_NoseIndex:{noseIndex}_ShoeIndex:{shoeIndex}_isBald:{isBald}");
             else
-                Game1.player.FarmerRenderer.textureName.Set($"GetGlam_{isMale}_{faceIndex}_{noseIndex}_{shoeIndex}_isBald{isBald}");
+                Game1.player.FarmerRenderer.textureName.Set($"GetGlam_IsMale:{isMale}_FaceIndex:{faceIndex}_NoseIndex:{noseIndex}_ShoeIndex{shoeIndex}_isBald:{isBald}");
         }
 
         /// <summary>Loads the Player base texture called by <see cref="ContentLoader"/></summary>
