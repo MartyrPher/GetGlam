@@ -9,21 +9,21 @@ namespace GetGlam.Framework
     public class ContentLoader : IAssetLoader
     {
         // Instance of ModEntry
-        ModEntry Entry;
+        private ModEntry Entry;
 
-        // Instance of ContentPackHelper
-        ContentPackHelper PackHelper;
+        // Instance of PlayerChanger
+        private PlayerChanger PlayerChanger;
 
         /// <summary>
         /// ContentLoader's Constructor.
         /// </summary>
         /// <param name="entry">Instance of ModEntry</param>
-        /// <param name="packHelper">Instance of ContentPackHelper</param>
-        public ContentLoader(ModEntry entry, ContentPackHelper packHelper)
+        /// <param name="packHelper">Instance of PlayerChanger</param>
+        public ContentLoader(ModEntry entry, PlayerChanger changer)
         {
             // Set the fields
             Entry = entry;
-            PackHelper = packHelper;
+            PlayerChanger = changer;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace GetGlam.Framework
 
             // If asset is GetGlam then load the player base
             if (asset.AssetName.StartsWith("GetGlam_"))
-                return (T)(object)PackHelper.LoadPlayerBase();
+                return (T)(object)PlayerChanger.LoadPlayerBase();
 
             return default;
         }

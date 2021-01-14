@@ -32,6 +32,9 @@ namespace GetGlam
         // Instance of SaveLoadMenuPatcher
         private SaveLoadMenuPatcher MenuPatcher;
 
+        // Instance of PlayerChanger
+        private PlayerChanger PlayerChanger;
+
         // Instance of Harmony Helper
         public HarmonyHelper HarmonyHelper;
 
@@ -70,7 +73,7 @@ namespace GetGlam
             HarmonyHelper.InitializeAndPatch();
 
             // Add the ContentLoader class to the AssetLoader List
-            helper.Content.AssetLoaders.Add(new ContentLoader(this, PackHelper));
+            helper.Content.AssetLoaders.Add(new ContentLoader(this, PlayerChanger));
         }
 
         /// <summary>
@@ -79,8 +82,9 @@ namespace GetGlam
         private void InitializeClasses()
         {
             PackHelper = new ContentPackHelper(this);
+            PlayerChanger = new PlayerChanger(this, PackHelper);
             Dresser = new DresserHandler(this, Config);
-            PlayerLoader = new CharacterLoader(this, PackHelper, Dresser);
+            PlayerLoader = new CharacterLoader(this, PlayerChanger, Dresser);
             MenuPatcher = new SaveLoadMenuPatcher(this, PlayerLoader);
             HarmonyHelper = new HarmonyHelper(this);
         }
@@ -165,7 +169,7 @@ namespace GetGlam
         /// </summary>
         private void CreateAndAssignDresserMenu()
         {
-            Menu = new GlamMenu(this, Config, PackHelper, Dresser, PlayerLoader);
+            Menu = new GlamMenu(this, Config, PackHelper, Dresser, PlayerLoader, PlayerChanger);
             Dresser.Menu = Menu;
         }
 
