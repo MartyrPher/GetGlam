@@ -76,6 +76,7 @@
     <Compile Include="Framework\HatEditor.cs" />
     <Compile Include="Framework\ImageInjector.cs" />
     <Compile Include="Framework\Patches\SkinColorPatch.cs" />
+    <Compile Include="Framework\PlayerChanger.cs" />
     <Compile Include="Framework\SaveLoadMenuPatcher.cs" />
     <Compile Include="ModConfig.cs" />
     <Compile Include="Framework\Patches\AccessoryPatch.cs" />
