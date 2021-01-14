@@ -15,8 +15,8 @@ namespace GetGlam.Framework
         // Instance of ModEntry
         private ModEntry Entry;
 
-        // Instance of ContentPackHelper
-        private ContentPackHelper PackHelper;
+        // Instance of PlayerChanger
+        private PlayerChanger PlayerChanger;
 
         // Instance of DresserHandler
         private DresserHandler Dresser;
@@ -31,13 +31,13 @@ namespace GetGlam.Framework
         /// CharacterLoader's Constructor.
         /// </summary>
         /// <param name="entry">The instance of ModEntry</param>
-        /// <param name="packHelper">The instance of ContentPackHelper</param>
+        /// <param name="changer">The instance of PlayerChanger</param>
         /// <param name="dresser">The instance of DresserHandler</param>
-        public CharacterLoader(ModEntry entry, ContentPackHelper packHelper, DresserHandler dresser)
+        public CharacterLoader(ModEntry entry, PlayerChanger changer, DresserHandler dresser)
         {
             // Set the fields to the instances
             Entry = entry;
-            PackHelper = packHelper;
+            PlayerChanger = changer;
             Dresser = dresser;
         }
 
@@ -100,7 +100,7 @@ namespace GetGlam.Framework
 
             //Lastly, change the base, THIS NEEDS TO BE LAST OR ELSE IT WON'T LOAD THE PLAYER STYLE
             if (!currentPlayerStyle.IsDefault)
-                PackHelper.ChangePlayerBase(Game1.player.isMale, currentPlayerStyle.BaseIndex, currentPlayerStyle.FaceIndex, currentPlayerStyle.NoseIndex, currentPlayerStyle.ShoesIndex, currentPlayerStyle.IsBald);
+                PlayerChanger.ChangePlayerBase(Game1.player.isMale, currentPlayerStyle.BaseIndex, currentPlayerStyle.FaceIndex, currentPlayerStyle.NoseIndex, currentPlayerStyle.ShoesIndex, currentPlayerStyle.IsBald);
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace GetGlam.Framework
             SetLoadScreenFarmerStyle(farmer, configModel);
 
             // Change the base
-            PackHelper.ChangePlayerBase(configModel.IsMale, configModel.BaseIndex, configModel.FaceIndex, configModel.NoseIndex, configModel.ShoesIndex, configModel.IsBald);
+            PlayerChanger.ChangePlayerBase(configModel.IsMale, configModel.BaseIndex, configModel.FaceIndex, configModel.NoseIndex, configModel.ShoesIndex, configModel.IsBald);
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace GetGlam.Framework
             SetPlayerHairColor(Favorites[whichPosition].HairColor);
 
             // Change the player base to the index in the favorites
-            PackHelper.ChangePlayerBase(
+            PlayerChanger.ChangePlayerBase(
                 Favorites[whichPosition].IsMale,
                 Favorites[whichPosition].BaseIndex,
                 Favorites[whichPosition].FaceIndex,

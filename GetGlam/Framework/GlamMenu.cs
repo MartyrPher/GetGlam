@@ -7,23 +7,28 @@ using System.Collections.Generic;
 
 namespace GetGlam.Framework
 {
-    /// <summary>Class that draws the custom menu and allows the player to change appearance.<summary>
+    /// <summary>
+    /// Class that draws the custom menu and allows the player to change appearance.
+    /// <summary>
     public class GlamMenu : IClickableMenu
     {
-        //Instance of ModEntry
+        // Instance of ModEntry
         private ModEntry Entry;
 
-        //The mods config
+        // The mods config
         private ModConfig Config;
 
-        //Instance of ContentPackHelper
+        // Instance of ContentPackHelper
         private ContentPackHelper PackHelper;
 
-        //Instance of DresserHandler
+        // Instance of DresserHandler
         private DresserHandler Dresser;
 
-        //Instanc of PlayerLoader
+        // Instance of PlayerLoader
         private CharacterLoader PlayerLoader;
+
+        // Instance of PlayerChanger
+        private PlayerChanger PlayerChanger;
 
         //List of new left buttons added to the menu
         private List<ClickableTextureComponent> NewLeftButtonsList = new List<ClickableTextureComponent>();
@@ -127,7 +132,7 @@ namespace GetGlam.Framework
         /// <param name="packHelper">Instance of <see cref="ContentPackHelper"/></param>
         /// <param name="dresser">Instance of <see cref="DresserHandler"/></param>
         /// <param name="playerLoader">Instance of <seealso cref="CharacterLoader"/></param>
-        public GlamMenu(ModEntry entry, ModConfig config, ContentPackHelper packHelper, DresserHandler dresser, CharacterLoader playerLoader)
+        public GlamMenu(ModEntry entry, ModConfig config, ContentPackHelper packHelper, DresserHandler dresser, CharacterLoader playerLoader, PlayerChanger changer)
             : base((int)Utility.getTopLeftPositionForCenteringOnScreen(712, 712, 0, 0).X, (int)Utility.getTopLeftPositionForCenteringOnScreen(712, 712, 0, 0).Y - IClickableMenu.borderWidth, 712, 712, false)
         {
             //Set the vars to the Instances
@@ -136,6 +141,7 @@ namespace GetGlam.Framework
             PackHelper = packHelper;
             Dresser = dresser;
             PlayerLoader = playerLoader;
+            PlayerChanger = changer;
 
             //Check if they're wearing a hat
             if (Game1.player.hat.Value != null)
@@ -201,7 +207,7 @@ namespace GetGlam.Framework
             Game1.player.FarmerRenderer.recolorEyes(EyeColorSnapshot);
             Game1.player.changeHairColor(HairColorSnapshot);
 
-            PackHelper.ChangePlayerBase(FarmerSnapshot[0] == 0 ? true : false, FarmerSnapshot[1], FarmerSnapshot[4], FarmerSnapshot[5], FarmerSnapshot[6], FarmerSnapshot[8] == 0 ? true : false);
+            PlayerChanger.ChangePlayerBase(FarmerSnapshot[0] == 0 ? true : false, FarmerSnapshot[1], FarmerSnapshot[4], FarmerSnapshot[5], FarmerSnapshot[6], FarmerSnapshot[8] == 0 ? true : false);
         }
 
         /// <summary>Sets the position for all the UI elements in the menu</summary>
@@ -461,12 +467,12 @@ namespace GetGlam.Framework
                     if (Game1.player.hair.Value - 49 <= 6 && !IsBald && component.name.Contains("ChangeHair"))
                     {
                         IsBald = true;
-                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                        PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     }
                     else if (IsBald && !(Game1.player.hair.Value - 49 <= 6) && component.name.Contains("ChangeHair"))
                     {
                         IsBald = false;
-                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                        PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     }
 
                     Game1.playSound("grassyStep");
@@ -488,12 +494,12 @@ namespace GetGlam.Framework
                     if (Game1.player.hair.Value - 49 <= 6 && !IsBald && component.name.Contains("ChangeHair"))
                     {
                         IsBald = true;
-                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                        PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     }
                     else if (IsBald && !(Game1.player.hair.Value - 49 <= 6) && component.name.Contains("ChangeHair"))
                     {
                         IsBald = false;
-                        PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                        PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     }
 
                     Game1.playSound("grassyStep");
@@ -684,7 +690,7 @@ namespace GetGlam.Framework
 
                     FaceIndex = 0;
                     NoseIndex = 0;
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "RightBase":
                     if (!NewRightButtonsList[0].visible)
@@ -697,7 +703,7 @@ namespace GetGlam.Framework
 
                     FaceIndex = 0;
                     NoseIndex = 0;
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "LeftNose":
                     if (NoseIndex + direction > -1)
@@ -705,7 +711,7 @@ namespace GetGlam.Framework
                     else
                         NoseIndex = PackHelper.GetNumberOfFacesAndNoses(Game1.player.isMale, BaseIndex, false);
 
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "RightNose":
                     if (NoseIndex + direction > PackHelper.GetNumberOfFacesAndNoses(Game1.player.isMale, BaseIndex, false))
@@ -713,7 +719,7 @@ namespace GetGlam.Framework
                     else
                         NoseIndex += direction;
 
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "LeftFace":
                     if (FaceIndex + direction > -1)
@@ -721,7 +727,7 @@ namespace GetGlam.Framework
                     else
                         FaceIndex = PackHelper.GetNumberOfFacesAndNoses(Game1.player.isMale, BaseIndex, true);
 
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "RightFace":
                     if (FaceIndex + direction > PackHelper.GetNumberOfFacesAndNoses(Game1.player.isMale, BaseIndex, true))
@@ -729,7 +735,7 @@ namespace GetGlam.Framework
                     else
                         FaceIndex += direction;
 
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "LeftShoe":
                     if (ShoeIndex + direction > -1)
@@ -737,7 +743,7 @@ namespace GetGlam.Framework
                     else
                         ShoeIndex = Game1.player.isMale ? PackHelper.MaleShoeTextureList.Count: PackHelper.FemaleShoeTextureList.Count;
 
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "RightShoe":
                     if (ShoeIndex + direction > (Game1.player.isMale ? PackHelper.MaleShoeTextureList.Count : PackHelper.FemaleShoeTextureList.Count))
@@ -745,7 +751,7 @@ namespace GetGlam.Framework
                     else
                         ShoeIndex += direction;
 
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "LeftDresser":
                     if (!NewLeftButtonsList[7].visible)
@@ -781,7 +787,7 @@ namespace GetGlam.Framework
                     //Reset the BaseIndex, ShoeIndex to prevent crashing
                     BaseIndex = 0;
                     ShoeIndex = 0;
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "Female":
                     Game1.player.changeGender(false);
@@ -789,7 +795,7 @@ namespace GetGlam.Framework
                     //Reset the BaseIndex, ShoeIndex to prevent crashing
                     BaseIndex = 0;
                     ShoeIndex = 0;
-                    PackHelper.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
+                    PlayerChanger.ChangePlayerBase(Game1.player.isMale, BaseIndex, FaceIndex, NoseIndex, ShoeIndex, IsBald);
                     break;
                 case "LeftChangeHair":
                     if (Game1.player.hair.Get().Equals(0) && PackHelper.NumberOfHairstlyesAdded == 74)
