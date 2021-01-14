@@ -1,88 +1,60 @@
 ﻿using GetGlam.Framework.ContentLoaders;
 using GetGlam.Framework.DataModels;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
-using StardewValley;
-using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace GetGlam.Framework
 {
     /// <summary>
-    /// Class that handles loading Content Packs and changing base textures.
+    /// Class that handles loading Content Packs.
     /// </summary>
     public class ContentPackHelper
     {
-        //Instance of ModEntry
+        // Instance of ModEntry
         private ModEntry Entry;
 
-        //List of Hair Models
+        // List of Hair Models
         public List<HairModel> HairList = new List<HairModel>();
 
-        //List of Accessory Models
+        // List of Accessory Models
         public List<AccessoryModel> AccessoryList = new List<AccessoryModel>();
 
-        //List of Dresser Models
+        // List of Dresser Models
         public List<DresserModel> DresserList = new List<DresserModel>();
 
-        //List of Skin Color Models
+        // List of Skin Color Models
         public List<SkinColorModel> SkinColorList = new List<SkinColorModel>();
 
-        //List of Female base textures
+        // List of Female base textures
         public List<Texture2D> FemaleBaseTextureList = new List<Texture2D>();
 
-        //List of Female base bald textures
+        // List of Female base bald textures
         public List<Texture2D> FemaleBaseBaldTextureList = new List<Texture2D>();
 
-        //List of Male base textures
+        // List of Male base textures
         public List<Texture2D> MaleBaseTextureList = new List<Texture2D>();
 
-        //List of Male base bald textures
+        // List of Male base bald textures
         public List<Texture2D> MaleBaseBaldTextureList = new List<Texture2D>();
 
-        //List of Female shoe textures
+        // List of Female shoe textures
         public List<Texture2D> FemaleShoeTextureList = new List<Texture2D>();
 
-        //List of Male shoe textures
+        // List of Male shoe textures
         public List<Texture2D> MaleShoeTextureList = new List<Texture2D>();
 
-        //Dictionary of male base Textures that has a Dictionary of filenames and the noseFace textures, yo dawg heard ya like dictionaries
+        // Dictionary of male base Textures that has a Dictionary of filenames and the noseFace textures, yo dawg heard ya like dictionaries
         public Dictionary<Texture2D, Dictionary<string, Texture2D>> MaleFaceAndNoseTextureDict = new Dictionary<Texture2D, Dictionary<string, Texture2D>>();
 
-        //Dictionary that houses the quantities of the noses and faces for a male base texture
+        // Dictionary that houses the quantities of the noses and faces for a male base texture
         public Dictionary<Texture2D, int[]> MaleBaseFaceNoseCount = new Dictionary<Texture2D, int[]>();
 
-        //Dictionary of female base textures that has a Dictionary of filenames and the noseFace textures
+        // Dictionary of female base textures that has a Dictionary of filenames and the noseFace textures
         public Dictionary<Texture2D, Dictionary<string, Texture2D>> FemaleFaceAndNoseTextureDict = new Dictionary<Texture2D, Dictionary<string, Texture2D>>();
 
-        //Dictionary that house the qunatities of the noses and faces for a femal base texture
+        // Dictionary that house the qunatities of the noses and faces for a femal base texture
         public Dictionary<Texture2D, int[]> FemaleBaseFaceNoseCount = new Dictionary<Texture2D, int[]>();
-
-        //Wether the player is male
-        private bool IsMale = false;
-
-        //The index of the face
-        private int FaceIndex = 0;
-
-        //The index of the nose
-        private int NoseIndex = 0;
-
-        //The index of the base
-        private int BaseIndex = 0;
-
-        //The index of the shoe
-        private int ShoeIndex = 0;
-
-        //An array of tweaks for the male shoe sprite heights
-        private int[] MaleShoeSpriteHeights = new int[21] { 11, 16, 15, 14, 13, 16, 16, 14, 16, 12, 14, 14, 15, 15, 16, 13, 15, 16, 16, 16, 15 };
-
-        //An array of tweaks for the female shoe sprite heights
-        private int[] FemaleShoeSpriteHeights = new int[21] { 15, 16, 14, 13, 12, 16, 16, 15, 16, 10, 13, 13, 13, 14, 14, 11, 14, 14, 14, 16, 13 };
-
-        //Whether the player is bald
-        public bool IsBald = false;
 
         // Number of hairstyles added by content packs including default hairs
         public int NumberOfHairstlyesAdded = 74;
@@ -90,6 +62,7 @@ namespace GetGlam.Framework
         // Number of accessories added by content packs including default accessories
         public static int NumberOfAccessoriesAdded = 19;
 
+        // Dictionary Used for Jumping to specific Hair Pack.
         public Dictionary<string, int> HairStyleSearch = new Dictionary<string, int>();
 
         /// <summary>
@@ -122,7 +95,7 @@ namespace GetGlam.Framework
                 LoadSkinColor(contentPack);
             }
 
-            //Add ImageInjector to the Asset Editor to start patching the images
+            // Add ImageInjector to the Asset Editor to start patching the images
             Entry.Helper.Content.AssetEditors.Add(new ImageInjector(Entry, this));
         }
 
@@ -198,20 +171,22 @@ namespace GetGlam.Framework
             skinColorLoader.LoadSkinColor();
         }
 
-        /// <summary>Gets the number of faces and noses for a base texture</summary>
+        /// <summary>
+        /// Gets the number of faces and noses for a base texture.
+        /// </summary>
         /// <param name="isMale">Whether the player is male</param>
         /// <param name="baseIndex">The base texture index</param>
         /// <param name="isFace">Wether it's looking for the face count</param>
         /// <returns>The count of faces or noses</returns>
         public int GetNumberOfFacesAndNoses(bool isMale, int baseIndex, bool isFace)
         {
-            //This is static so we return the default values
+            // This is static so we return the default values
             if (baseIndex.Equals(0) && isFace)
                 return 1;
             else if (baseIndex.Equals(0) && !isFace)
                 return 2;
 
-            //Try...catch incase the Key is not in the dictionary
+            // Try...catch incase the Key is not in the dictionary
             try
             {
                 if (isFace && isMale)
@@ -225,165 +200,12 @@ namespace GetGlam.Framework
             }
             catch
             {
-                //If the key is not in the dictionary then give the default values
+                // If the key is not in the dictionary then give the default values
                 return 0;
             }
 
-            //Return 0 if it doens't find anything
+            // Return 0 if it doesn't find anything
             return 0;
-        }
-
-        /// <summary>Changes the player base by setting the texture name</summary>
-        /// <param name="isMale">Whether the player is male</param>
-        /// <param name="baseIndex">The base index</param>
-        /// <param name="faceIndex">The face index</param>
-        /// <param name="noseIndex">The nose index</param>
-        /// <param name="shoeIndex">The shoe index</param>
-        /// <param name="isBald">Whether the player is bald</param>
-        public void ChangePlayerBase(bool isMale, int baseIndex, int faceIndex, int noseIndex, int shoeIndex, bool isBald)
-        {
-            //Set the fields
-            IsMale = isMale;
-            BaseIndex = baseIndex;
-            FaceIndex = faceIndex;
-            NoseIndex = noseIndex;
-            ShoeIndex = shoeIndex;
-            IsBald = isBald;
-
-            //Check if the base is 0, if it's not we want to load the base version
-            if (baseIndex != 0)
-                Game1.player.FarmerRenderer.textureName.Set($"GetGlam_IsMale:{isMale}_BaseIndex:{baseIndex}_FaceIndex:{faceIndex}_NoseIndex:{noseIndex}_ShoeIndex:{shoeIndex}_isBald:{isBald}");
-            else
-                Game1.player.FarmerRenderer.textureName.Set($"GetGlam_IsMale:{isMale}_FaceIndex:{faceIndex}_NoseIndex:{noseIndex}_ShoeIndex{shoeIndex}_isBald:{isBald}");
-        }
-
-        /// <summary>Loads the Player base texture called by <see cref="ContentLoader"/></summary>
-        /// <returns>The new player base texture</returns>
-        public Texture2D LoadPlayerBase()
-        {
-            //Create a new texture
-            Texture2D playerBase;
-
-            //Wrap in a try...catch in case they removed the base from the folder
-            try
-            {
-                //Bald checking
-                if (BaseIndex != 0 && !IsBald)
-                    playerBase = IsMale ? MaleBaseTextureList[BaseIndex - 1] : FemaleBaseTextureList[BaseIndex - 1];
-                else if (BaseIndex != 0 && IsBald)
-                    playerBase = IsMale ? MaleBaseBaldTextureList[BaseIndex - 1] : FemaleBaseBaldTextureList[BaseIndex - 1];
-                else if (IsBald)
-                    playerBase = Entry.Helper.Content.Load<Texture2D>(IsMale ? "Characters\\Farmer\\farmer_base_bald" : "Characters\\Farmer\\farmer_girl_base_bald", ContentSource.GameContent);
-                else
-                    playerBase = Entry.Helper.Content.Load<Texture2D>(IsMale ? "Characters\\Farmer\\farmer_base" : "Characters\\Farmer\\farmer_girl_base", ContentSource.GameContent);
-            }
-            catch (Exception ex)
-            {
-                //Set to default base if the above loading fails
-                Entry.Monitor.Log("There was a problem loading the base file, setting the base to default.", LogLevel.Warn);
-                if (IsBald)
-                    playerBase = Entry.Helper.Content.Load<Texture2D>(IsMale ? "Characters\\Farmer\\farmer_base_bald" : "Characters\\Farmer\\farmer_girl_base_bald", ContentSource.GameContent);
-                else
-                    playerBase = Entry.Helper.Content.Load<Texture2D>(IsMale ? "Characters\\Farmer\\farmer_base" : "Characters\\Farmer\\farmer_girl_base", ContentSource.GameContent);
-
-                BaseIndex = 0;
-            }
-
-            //Try...catch for the face and nose if the key was not found in the dictionary
-            try
-            {
-                //The base is 0 then load the default textures
-                if (BaseIndex.Equals(0))
-                {
-                    Texture2D faceAndNoseTexture;
-                    if (!IsBald)
-                        faceAndNoseTexture = Entry.Helper.Content.Load<Texture2D>(IsMale ? $"assets/male_face{FaceIndex}_nose{NoseIndex}.png" : $"assets/female_face{FaceIndex}_nose{NoseIndex}.png");
-                    else
-                        faceAndNoseTexture = Entry.Helper.Content.Load<Texture2D>(IsMale ? $"assets/male_face{FaceIndex}_nose{NoseIndex}_bald.png" : $"assets/female_face{FaceIndex}_nose{NoseIndex}_bald.png");
-
-                    PatchBaseTexture(playerBase, faceAndNoseTexture, 0, 0);
-                }
-                //If the player is male and the count is not 0
-                else if (IsMale && MaleBaseFaceNoseCount[playerBase][0] > 0 && MaleBaseFaceNoseCount[playerBase][1] > 0)
-                {
-                    Texture2D faceAndNoseTexture;
-                    faceAndNoseTexture = MaleFaceAndNoseTextureDict[playerBase][$"male_face{FaceIndex}_nose{NoseIndex}.png"];
-
-                    PatchBaseTexture(playerBase, faceAndNoseTexture, 0, 0);
-                }
-                //If the player is female and the count is not 0
-                else if (!IsMale && FemaleBaseFaceNoseCount[playerBase][0] > 0 && FemaleBaseFaceNoseCount[playerBase][1] > 0)
-                {
-                    Texture2D faceAndNoseTexture;
-                    faceAndNoseTexture = FemaleFaceAndNoseTextureDict[playerBase][$"female_face{FaceIndex}_nose{NoseIndex}.png"];
-
-                    PatchBaseTexture(playerBase, faceAndNoseTexture, 0, 0);
-                }
-            }
-            catch (KeyNotFoundException ex)
-            {
-                //Set to deafault face and nose
-                NoseIndex = 0;
-                FaceIndex = 0;
-            }
-
-            Texture2D shoeTexture;
-            //Create new shoeTexture and check the shoe index to load the right shoe
-            try
-            {
-                if (ShoeIndex == 0)
-                    shoeTexture = Entry.Helper.Content.Load<Texture2D>(IsMale ? "assets/farmer_base_shoes.png" : "assets/farmer_girl_base_shoes.png");
-                else
-                    shoeTexture = IsMale ? MaleShoeTextureList[ShoeIndex - 1] : FemaleShoeTextureList[ShoeIndex - 1];
-            }
-            catch
-            {
-                //This error pops up when the user saves at a shoe index then removes the content pack
-                Entry.Monitor.Log("Could not find a shoe at the index. Did you remove a pack that added shoes? Setting to deafault.", LogLevel.Warn);
-                ShoeIndex = 0;
-                
-                shoeTexture = Entry.Helper.Content.Load<Texture2D>(IsMale ? "assets/farmer_base_shoes.png" : "assets/farmer_girl_base_shoes.png");
-            }
-
-            //Patch the player base with the shoes
-            int[] shoeHeights = IsMale ? MaleShoeSpriteHeights : FemaleShoeSpriteHeights;
-            for (int i = 0; i < shoeHeights.Length; i++)
-                PatchBaseTexture(playerBase, shoeTexture, 1 * i, (1 * i) * 3, 96, 32, shoeHeights[i]);
-
-            //Return the new player base
-            return playerBase;
-        }
-
-        /// <summary>Patches a texture using Texture2D.GetData and Texture2D.SetData</summary>
-        /// <param name="targetTexture">The target texture</param>
-        /// <param name="sourceTexture">The source texture</param>
-        /// <param name="sourceID">The source ID</param>
-        /// <param name="targetID">The target ID</param>
-        /// <param name="gridWidth">The grids width</param>
-        /// <param name="gridHeight">The grids height</param>
-        /// <param name="adjustedHeight">The adjusted height</param>
-        private void PatchBaseTexture(Texture2D targetTexture, Texture2D sourceTexture, int sourceID, int targetID, int gridWidth = 96, int gridHeight = 672, int adjustedHeight = 0)
-        {
-            Color[] colorData = new Color[gridWidth * (adjustedHeight == 0 ? gridHeight : adjustedHeight)];
-            sourceTexture.GetData(0, GetSourceRect(sourceID, sourceTexture, gridWidth, gridHeight, adjustedHeight), colorData, 0, colorData.Length);
-            targetTexture.SetData(0, GetSourceRect(targetID, targetTexture, gridWidth, gridHeight, adjustedHeight), colorData, 0, colorData.Length);
-        }
-
-        /// <summary>Get the source rect for an image</summary>
-        /// <param name="index">The index</param>
-        /// <param name="texture">The target texture to get the source rect</param>
-        /// <param name="gridWidth">The grids width</param>
-        /// <param name="gridHeight">The grids height</param>
-        /// <param name="adjustedHeight">The adjusted height</param>
-        /// <returns>The textures source rect</returns>
-        private Rectangle GetSourceRect(int index, Texture2D texture, int gridWidth, int gridHeight, int adjustedHeight)
-        {
-            return new Rectangle(
-                index % (texture.Width / gridWidth) * gridWidth,
-                index / (texture.Width / gridWidth) * gridHeight + (adjustedHeight == 0 ? 0 : 32 - adjustedHeight),
-                gridWidth,
-                adjustedHeight == 0 ? gridHeight : adjustedHeight
-            );
         }
     }
 }
