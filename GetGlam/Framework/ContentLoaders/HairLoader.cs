@@ -29,7 +29,8 @@ namespace GetGlam.Framework.ContentLoaders
         /// <param name="contentPack">Current content pack</param>
         public HairLoader(ModEntry modEntry, IContentPack contentPack, ContentPackHelper packHelper)
         {
-            HairDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Hairstyles"));
+            if (contentPack != null)
+                HairDirectory = new DirectoryInfo(Path.Combine(contentPack.DirectoryPath, "Hairstyles"));
             Entry = modEntry;
             CurrentContentPack = contentPack;
             PackHelper = packHelper;
@@ -54,6 +55,20 @@ namespace GetGlam.Framework.ContentLoaders
                     Entry.Monitor.Log($"{CurrentContentPack.Manifest.Name} hairstyles is empty. This pack was not added.", LogLevel.Warn);
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates a model for hairstyles2.png.
+        /// </summary>
+        public void LoadHairstyleTwo()
+        {
+            HairModel hairstyleTwo = new HairModel();
+            hairstyleTwo.Texture = Entry.Helper.Content.Load<Texture2D>("Characters\\Farmer\\hairstyles2", ContentSource.GameContent);
+            hairstyleTwo.ModName = "Hairstyles 2";
+            hairstyleTwo.TextureHeight = hairstyleTwo.Texture.Height;
+            hairstyleTwo.NumberOfHairstyles = 23;
+            PackHelper.NumberOfHairstlyesAdded += 23;
+            PackHelper.HairList.Add(hairstyleTwo);
         }
 
         /// <summary>
