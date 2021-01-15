@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GetGlam.Framework.ContentEditors;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
@@ -7,50 +8,49 @@ using System.IO;
 
 namespace GetGlam.Framework
 {
-    /// <summary>Class used to inject new textures into the games content.</summary>
+    /// <summary>
+    /// Class used to inject new textures into the games content.
+    /// </summary>
     public class ImageInjector : IAssetEditor
     {
-        //Instance of ModEntry
+        // Instance of ModEntry
         private ModEntry Entry;
 
-        //Instance of ContentPackHelper
+        // Instance of ContentPackHelper
         private ContentPackHelper PackHelper;
 
-        //The HairTexture height, default: 672
-        private int HairTextureHeight = 672;
-
-        //The width of where to put the hair in the asset
-        private int HairTextureWidth = 0;
-
-        //The AccessoryTexture starting Y, default: 64
+        // The AccessoryTexture starting Y, default: 64
         private static int AccessoryTextureHeight = 64;
 
-        //The AccessoryTextures starting X, default: 48
+        // The AccessoryTexture starting X, default: 48
         private int AccessoryTextureWidth = 48;
 
-        //The skin color starting Y, default: 24
+        // The skin color starting Y, default: 24
         private static int SkinColorTextureHeight = 24;
 
-        //The DresserTexture Height, default: 32
+        // The DresserTexture Height, default: 32
         private int DresserTextureHeight = 32;
 
-        //Was the Dresser image already edited???
+        // Was the Dresser image already edited???
         private bool WasDresserImageEdited = false;
 
-        //Why do I even need this?
+        // Why do I even need this?
         private int SkinEditedCounter = 0;
 
-        /// <summary>Image Injectors Constructor</summary>
-        /// <param name="entry"></param>
-        /// <param name="packHelper"></param>
+        /// <summary>
+        /// Image Injectors Constructor.
+        /// </summary>
+        /// <param name="entry">Instance of ModEntry</param>
+        /// <param name="packHelper">Instance of ContentPackHelper</param>
         public ImageInjector(ModEntry entry, ContentPackHelper packHelper)
         {
-            //Set the vars to the instances
             Entry = entry;
             PackHelper = packHelper;
         }
 
-        /// <summary>Wether SMAPI's Asset Editor can edit a specific asset.</summary>
+        /// <summary>
+        /// Whether SMAPI's Asset Editor can edit a specific asset.
+        /// </summary>
         /// <typeparam name="T">The Type of asset</typeparam>
         /// <param name="asset">The asset in question</param>
         /// <returns>Whether it can load the specific asset</returns>
@@ -68,71 +68,15 @@ namespace GetGlam.Framework
             return false;
         }
 
-        /// <summary>SMAPI's Asset Editor tries to edit a specific asset.</summary>
+        /// <summary>
+        /// SMAPI's Asset Editor tries to edit a specific asset.
+        /// </summary>
         /// <typeparam name="T">The Type of asset</typeparam>
         /// <param name="asset">The asset in question</param>
         public void Edit<T>(IAssetData asset)
         {
-            //If the asset is hairstyles
-            if (asset.AssetNameEquals("Characters\\Farmer\\hairstyles"))
-            {
-                //Don't edit if they have no hair content packs
-                if (PackHelper.NumberOfHairstlyesAdded == 74)
-                    return;
-
-                //Create a new texture and set it as the old one
-                Texture2D oldTexture = asset.AsImage().Data;
-                Texture2D newTexture = new Texture2D(Game1.graphics.GraphicsDevice, oldTexture.Width, Math.Max(oldTexture.Height, 4096));
-                asset.ReplaceWith(newTexture);
-                asset.AsImage().PatchImage(oldTexture);
-
-                //Loop through each hair loaded and extend the image
-                foreach (var hair in PackHelper.HairList)
-                {
-                    Entry.Monitor.Log($"Patching {hair.ModName}", LogLevel.Trace);
-
-                    //Ints to run throught the current hairstyles.png to find each hairstyle within the png
-                    int hairTextureX = 0;
-                    int hairTextureY = 0;
-
-                    for (int i = 0; i < hair.NumberOfHairstyles; i++)
-                    {
-                        if ((HairTextureHeight + 96) >= 4032 && !Entry.IsSpaceCoreInstalled)
-                        {
-                            Entry.Monitor.Log($"{hair.ModName} hairstyles cannot be added to the game, the texture is too big.", LogLevel.Error);
-                            return;
-                        }
-
-                        //Patch the hair texture and change the hair texture height
-                        if (Entry.IsSpaceCoreInstalled)
-                            Entry.HarmonyHelper.SpaceCorePatchExtendedTileSheet(asset.AsImage(), hair.Texture, new Rectangle(hairTextureX, hairTextureY, 16, 96), new Rectangle(HairTextureWidth, HairTextureHeight, 16, 96));
-                        else
-                            asset.AsImage().PatchImage(hair.Texture, new Rectangle(hairTextureX, hairTextureY, 16, 96), new Rectangle(HairTextureWidth, HairTextureHeight, 16, 96));
-
-                        //Change which hair is being added from the source texture
-                        if (hairTextureX + 16 == 128)
-                        {
-                            hairTextureX = 0;
-                            hairTextureY += 96;
-                        }
-                        else
-                            hairTextureX += 16;
-
-                        //Change where to put the hair on the asset
-                        if (HairTextureWidth + 16 >= 128)
-                        {
-                            HairTextureWidth = 0;
-                            HairTextureHeight += 96;
-                        }
-                        else
-                            HairTextureWidth += 16;
-                    }
-                }
-
-                //Cut the blank image from the image
-                if (!Entry.IsSpaceCoreInstalled || PackHelper.NumberOfHairstlyesAdded < 335)
-                    CutEmptyImage(asset, HairTextureHeight, 128);
-            }
+            HairEditor hairEditor = new HairEditor(Entry, PackHelper, asset);
+            hairEditor.EditHairTexture();
 
             //If the asset is accessories
             if (asset.AssetNameEquals("Characters\\Farmer\\accessories"))
