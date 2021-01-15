@@ -57,7 +57,7 @@ namespace GetGlam.Framework
         public Dictionary<Texture2D, int[]> FemaleBaseFaceNoseCount = new Dictionary<Texture2D, int[]>();
 
         // Number of hairstyles added by content packs including default hairs
-        public int NumberOfHairstlyesAdded = 74;
+        public int NumberOfHairstlyesAdded = 56;
 
         // Number of accessories added by content packs including default accessories
         public static int NumberOfAccessoriesAdded = 19;
@@ -81,6 +81,8 @@ namespace GetGlam.Framework
         /// </summary>
         public void ReadContentPacks()
         {
+            AddHairstylesTwo();
+
             // Loop through each content pack
             foreach (IContentPack contentPack in Entry.Helper.ContentPacks.GetOwned())
             {
@@ -97,6 +99,15 @@ namespace GetGlam.Framework
 
             // Add ImageInjector to the Asset Editor to start patching the images
             Entry.Helper.Content.AssetEditors.Add(new ImageInjector(Entry, this));
+        }
+
+        /// <summary>
+        /// Loads the hairstyles two image.
+        /// </summary>
+        private void AddHairstylesTwo()
+        {
+            HairLoader hairLoader = new HairLoader(Entry, null, this);
+            hairLoader.LoadHairstyleTwo();
         }
 
         /// <summary>
