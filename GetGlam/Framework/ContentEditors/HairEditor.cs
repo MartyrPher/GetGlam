@@ -9,7 +9,7 @@ namespace GetGlam.Framework.ContentEditors
 {
     public class HairEditor
     {
-        //Instance of Mod Entry
+        // Instance of Mod Entry
         private ModEntry Entry;
 
         // Instance of ContentPackHelper
@@ -81,7 +81,7 @@ namespace GetGlam.Framework.ContentEditors
                         }
 
                         PatchHairTexture(hair, hairTextureX, hairTextureY);
-                        ChangeHairLocationOnSourceTexture(ref hairTextureX, ref hairTextureY);
+                        ChangeHairLocationOnSourceTexture(hair, ref hairTextureX, ref hairTextureY);
                         ChangeHairLocationOnNewTexture();
                     }
                 }
@@ -106,13 +106,13 @@ namespace GetGlam.Framework.ContentEditors
         /// </summary>
         /// <param name="hair">Current hair patched</param>
         /// <param name="hairTextureX">X where texture is being patched</param>
-        /// <param name="hairTextureY">Y where texture s being patched</param>
+        /// <param name="hairTextureY">Y where texture is being patched</param>
         private void PatchHairTexture(HairModel hair, int hairTextureX, int hairTextureY)
         {
             if (Entry.IsSpaceCoreInstalled)
-                Entry.HarmonyHelper.SpaceCorePatchExtendedTileSheet(Asset.AsImage(), hair.Texture, new Rectangle(hairTextureX, hairTextureY, 16, 96), new Rectangle(HairTextureWidth, HairTextureHeight, 16, 96));
+                Entry.HarmonyHelper.SpaceCorePatchExtendedTileSheet(Asset.AsImage(), hair.Texture, new Rectangle(hairTextureX, hairTextureY, SingleHairstyleWidth, SingleHairstyleHeight), new Rectangle(HairTextureWidth, HairTextureHeight, SingleHairstyleWidth, SingleHairstyleHeight));
             else
-                Asset.AsImage().PatchImage(hair.Texture, new Rectangle(hairTextureX, hairTextureY, SingleHairstyleWidth, SingleHairstyleHeight), new Rectangle(HairTextureWidth, HairTextureHeight, 16, 96));
+                Asset.AsImage().PatchImage(hair.Texture, new Rectangle(hairTextureX, hairTextureY, SingleHairstyleWidth, SingleHairstyleHeight), new Rectangle(HairTextureWidth, HairTextureHeight, SingleHairstyleWidth, SingleHairstyleHeight));
         }
 
         /// <summary>
@@ -120,15 +120,18 @@ namespace GetGlam.Framework.ContentEditors
         /// </summary>
         /// <param name="hairTextureX">X where the current hair is</param>
         /// <param name="hairTextureY">Y where the current hair is</param>
-        private static void ChangeHairLocationOnSourceTexture(ref int hairTextureX, ref int hairTextureY)
+        private void ChangeHairLocationOnSourceTexture(HairModel hairModel, ref int hairTextureX, ref int hairTextureY)
         {
             if (hairTextureX + SingleHairstyleWidth == 128)
             {
                 hairTextureX = 0;
-                hairTextureY += SingleHairstyleHeight;
+                hairTextureY += hairModel.ModName.Equals("Hairstyles 2") ? SingleHairstyleHeight + 32 : SingleHairstyleHeight;
             }
             else
                 hairTextureX += SingleHairstyleWidth;
+
+            Entry.Monitor.Log($"Hairstyle 2 X: {hairTextureX}", LogLevel.Alert);
+            Entry.Monitor.Log($"Hairstyle 2 Y: {hairTextureY}", LogLevel.Alert);
         }
 
         /// <summary>
