@@ -2,7 +2,6 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using Harmony;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace GetGlam
@@ -53,26 +52,18 @@ namespace GetGlam
             // Load the config
             Config = helper.ReadConfig<ModConfig>();
 
-            // Initialize classes
             InitializeClasses();
-
-            // Set up the events
             SetUpEvents();
-
-            // Check for installed optional mods
             CheckIfOptionalModsAreInstalled();
 
             // If SpaceCore installed then register the extended tilesheets
             if (IsSpaceCoreInstalled)
                 RegisterSpaceCoreSheets();
 
-            // Initialize the LoadSaveMenu Patcher
-            MenuPatcher.Init();
 
-            // Initialize and Patch with Harmony
+            MenuPatcher.Initialize();
             HarmonyHelper.InitializeAndPatch();
 
-            // Add the ContentLoader class to the AssetLoader List
             helper.Content.AssetLoaders.Add(new ContentLoader(this, PlayerChanger));
         }
 
@@ -106,7 +97,6 @@ namespace GetGlam
         private void CheckIfOptionalModsAreInstalled()
         {
             CheckIfSpaceCoreIsInstalled();
-
             CheckIfCustomizeAnywhereIsInstalled();
         }
 
@@ -144,13 +134,8 @@ namespace GetGlam
         /// <param name="e"> The Save Loaded Event arguement</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            // Set up the Dresser
             SetUpDresser();
-
-            //Create the Menu
             CreateAndAssignDresserMenu();
-
-            //Load the character
             PlayerLoader.LoadCharacterLayout(Menu);
         }
 
@@ -199,8 +184,6 @@ namespace GetGlam
         {
             // Set the menu to null since it's a per save type of thing
             Menu = null;
-
-            // Clear the favorites list as it's per save
             PlayerLoader.Favorites.Clear();
         }
 
@@ -214,14 +197,10 @@ namespace GetGlam
             // Check if the button is the Menu key and there is no menu
             if (e.Button.Equals(Config.OpenGlamMenuKey) && Game1.activeClickableMenu is null)
             {
-                // Take a Snapshot
                 Menu.TakeSnapshot();
-
-                // Change player direction and open the menu
                 ChangePlayerDirection();
             }
 
-            // Check if the user clicked on the dresser
             Dresser.DresserInteractCheck(e.Button);
         }
 
