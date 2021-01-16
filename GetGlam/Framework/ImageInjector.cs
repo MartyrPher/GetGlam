@@ -1,10 +1,5 @@
 ﻿using GetGlam.Framework.ContentEditors;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
-using StardewValley;
-using System;
-using System.IO;
 
 namespace GetGlam.Framework
 {
@@ -18,24 +13,6 @@ namespace GetGlam.Framework
 
         // Instance of ContentPackHelper
         private ContentPackHelper PackHelper;
-
-        // The AccessoryTexture starting Y, default: 64
-        private static int AccessoryTextureHeight = 64;
-
-        // The AccessoryTexture starting X, default: 48
-        private int AccessoryTextureWidth = 48;
-
-        // The skin color starting Y, default: 24
-        private static int SkinColorTextureHeight = 24;
-
-        // The DresserTexture Height, default: 32
-        private int DresserTextureHeight = 32;
-
-        // Was the Dresser image already edited???
-        private bool WasDresserImageEdited = false;
-
-        // Why do I even need this?
-        private int SkinEditedCounter = 0;
 
         /// <summary>
         /// Image Injectors Constructor.
@@ -69,179 +46,74 @@ namespace GetGlam.Framework
         }
 
         /// <summary>
-        /// SMAPI's Asset Editor tries to edit a specific asset.
+        /// SMAPI's Asset Editor tries to edit a specific sset.
         /// </summary>
-        /// <typeparam name="T">The Type of asset</typeparam>
-        /// <param name="asset">The asset in question</param>
+        /// <typeparam name="T">The Type of Asset</typeparam>
+        /// <param name="asset">The Asset in question</param>
         public void Edit<T>(IAssetData asset)
+        {
+            EditHair(asset);
+            EditAccessory(asset);
+            EditSkin(asset);
+            EditDresser(asset);
+        }
+
+        /// <summary>
+        /// Edits hair texture.
+        /// </summary>
+        /// <param name="asset">Current Asset</param>
+        private void EditHair(IAssetData asset)
         {
             HairEditor hairEditor = new HairEditor(Entry, PackHelper, asset);
             hairEditor.EditHairTexture();
-
-            //If the asset is accessories
-            if (asset.AssetNameEquals("Characters\\Farmer\\accessories"))
-            {
-                //Create a new texture and set it as the old one
-                Texture2D oldTexture = asset.AsImage().Data;
-                Texture2D newTexture = new Texture2D(Game1.graphics.GraphicsDevice, oldTexture.Width, Math.Max(oldTexture.Height, 4096));
-                asset.ReplaceWith(newTexture);
-                asset.AsImage().PatchImage(oldTexture);
-    
-                //Loop through each accessory loaded and extend the image
-                foreach (var accessory in PackHelper.AccessoryList)
-                {
-                    //Ints to run throught the current hairstyles.png to find each hairstyle within the png
-                    int accessoryTextureX = 0;
-                    int accessoryTextureY = 0;
-
-                    for (int i = 0; i < accessory.NumberOfAccessories; i++)
-                    {
-                        if ((AccessoryTextureHeight + 96) >= 4096)
-                        {
-                            Entry.Monitor.Log($"{accessory.ModName} accessories cannot be added to the game, the texture is too big.", LogLevel.Error);
-                            return;
-                        }
-
-                        //Patch the hair texture and change the hair texture height
-                        asset.AsImage().PatchImage(accessory.Texture, new Rectangle(accessoryTextureX, accessoryTextureY, 16, 32), new Rectangle(AccessoryTextureWidth, AccessoryTextureHeight, 16, 32));
-
-                        //Change which accessory is being added from the source texture
-                        if (accessoryTextureX + 16 == 128)
-                        {
-                            accessoryTextureX = 0;
-                            accessoryTextureY += 32;
-                        }
-                        else
-                            accessoryTextureX += 16;
-
-                        //Change where to put the accessory on the asset
-                        if (AccessoryTextureWidth + 16 == 128)
-                        {
-                            AccessoryTextureWidth = 0;
-                            AccessoryTextureHeight += 32;
-                        }
-                        else
-                            AccessoryTextureWidth += 16;
-                    }
-                }
-
-                //Cut the blank image from the image
-                //CutEmptyImage(asset, AccessoryTextureHeight, 128);
-            }
-
-            if (asset.AssetNameEquals("Characters\\Farmer\\skinColors"))
-            {
-                //Break if the skin colors were already edited
-                if (SkinEditedCounter != 4)
-                {
-                    SkinEditedCounter++;
-                    return;
-                }
-
-                SkinEditedCounter = 0;
-                //Create a new texture and set it as the old one
-                Texture2D oldTexture = asset.AsImage().Data;
-                Texture2D newTexture = new Texture2D(Game1.graphics.GraphicsDevice, oldTexture.Width, Math.Max(oldTexture.Height, 4096));
-                asset.ReplaceWith(newTexture);
-                asset.AsImage().PatchImage(oldTexture);
-
-                //Loop through each skin color loaded and extend the image
-                foreach (var skinColor in PackHelper.SkinColorList)
-                {
-                    if ((skinColor.TextureHeight + SkinColorTextureHeight) > 4096)
-                    {
-                        Entry.Monitor.Log($"{skinColor.ModName} skin colors cannot be added to the game, the texture is too big. Please show this Alert to MartyrPher and I guess they'll have to extend the skinColor image...uhh yea. Why do you need 4096 skin colors anyway?", LogLevel.Alert);
-                        return;
-                    }
-
-                    //Patch the skin color and change the skin color height
-                    asset.AsImage().PatchImage(skinColor.Texture, null, new Rectangle(0, SkinColorTextureHeight, 3, skinColor.TextureHeight));
-                    SkinColorTextureHeight += skinColor.TextureHeight;
-                }
-
-                //Cut the blank image
-                CutEmptyImage(asset, SkinColorTextureHeight, 3);
-            }
-
-            //If the asset is the dresser
-            if (asset.AssetNameEquals($"Mods/{Entry.ModManifest.UniqueID}/dresser.png"))
-            {
-                //Break if the image was already edited
-                if (WasDresserImageEdited)
-                    return;
-
-                //Set dresser was edited and replace the old tecture with a new one
-                WasDresserImageEdited = true;
-                Texture2D oldTexture = asset.AsImage().Data;
-                Texture2D newTexture = new Texture2D(Game1.graphics.GraphicsDevice, 16, Math.Max(oldTexture.Height, 4096));
-                asset.ReplaceWith(newTexture);
-                asset.AsImage().PatchImage(oldTexture);
-
-                //Loop through each dresser and patch the image
-                foreach (var dresser in PackHelper.DresserList)
-                {
-                    if ((dresser.TextureHeight + DresserTextureHeight) > 4096)
-                    {
-                        Entry.Monitor.Log($"{dresser.ModName} dressers cannot be added to the game, the texture is too big.", LogLevel.Warn);
-                        return;
-                    }
-
-                    //Patch the dresser.png and adjust the height
-                    asset.AsImage().PatchImage(dresser.Texture, null, new Rectangle(0, DresserTextureHeight, 16, dresser.TextureHeight));
-                    DresserTextureHeight += dresser.TextureHeight;
-                }
-
-                Entry.Monitor.Log($"Dresser Image height is now: {DresserTextureHeight}", LogLevel.Trace);
-
-                //Cut the empty image from the dresser texture
-                CutEmptyImage(asset, DresserTextureHeight, 16);
-
-                //Save the dresser to the mod folder so it can be used to create a TileSheet for the Farmhouse
-                FileStream stream = new FileStream(Path.Combine(Entry.Helper.DirectoryPath, "assets", "dresser.png"), FileMode.Create);
-                asset.AsImage().Data.SaveAsPng(stream, 16, DresserTextureHeight);
-                stream.Close();
-            }
         }
 
-        /// <summary>Get the number of accessories, used in AccessoryPatch</summary>
+        /// <summary>
+        /// Edits accessory texture.
+        /// </summary>
+        /// <param name="asset">Current Asset</param>
+        private void EditAccessory(IAssetData asset)
+        {
+            AccessoryEditor accessoryEditor = new AccessoryEditor(Entry, PackHelper, asset);
+            accessoryEditor.EditAccessoryTexture();
+        }
+
+        /// <summary>
+        /// Edits skin texture.
+        /// </summary>
+        /// <param name="asset">Current Asset</param>
+        private void EditSkin(IAssetData asset)
+        {
+            SkinEditor skinEditor = new SkinEditor(Entry, PackHelper, asset);
+            skinEditor.EditSkinTexture();
+        }
+
+        /// <summary>
+        /// Edits dresser texture.
+        /// </summary>
+        /// <param name="asset">Current Asset</param>
+        private void EditDresser(IAssetData asset)
+        {
+            DresserEditor dresserEditor = new DresserEditor(Entry, PackHelper, asset);
+            dresserEditor.EditDresserTexture();
+        }
+
+        /// <summary>
+        /// Get the number of accessories, used in AccessoryPatch.
+        /// </summary>
         /// <returns>The number of Accessories</returns>
         public static int GetNumberOfAccessories()
         {
             return ContentPackHelper.NumberOfAccessoriesAdded;
         }
 
-        /// <summary>Get the number of accessories minus one, used in AccessoryPatch</summary>
+        /// <summary>
+        /// Get the number of accessories minus one, used in AccessoryPatch.
+        /// </summary>
         /// <returns>The number of Accessories minus one</returns>
         public static int GetNumberOfAccessoriesMinusOne()
         {
             return ContentPackHelper.NumberOfAccessoriesAdded - 1;
-        }
-
-        /// <summary>Get the number of skin color, used in SkinColorPatch</summary>
-        /// <returns>The number of Skin Colors</returns>
-        public static int GetNumberOfSkinColor()
-        {
-            return SkinColorTextureHeight;
-        }
-
-        /// <summary>Get the number of skin color minus one, used in SkinColorPatch</summary>
-        /// <returns>The number of Skin Colors minus one</returns>
-        public static int GetNumberOfSkinColorMinusOne()
-        {
-            return SkinColorTextureHeight - 1;
-        }
-
-        /// <summary>Cuts the empty image from the texture.</summary>
-        /// <param name="asset">The asset to cut</param>
-        /// <param name="newHeight">The assets new height</param>
-        /// <param name="newWidth">The assets new width</param>
-        private void CutEmptyImage(IAssetData asset, int newHeight, int newWidth)
-        {
-            Texture2D oldTexture = asset.AsImage().Data;
-            Texture2D cutTexture = new Texture2D(Game1.graphics.GraphicsDevice, oldTexture.Width, newHeight);
-
-            asset.ReplaceWith(cutTexture);
-            asset.AsImage().PatchImage(oldTexture, new Rectangle(0, 0, newWidth, newHeight), new Rectangle(0, 0, newWidth, newHeight));
-        }
+        }   
     }
 }
