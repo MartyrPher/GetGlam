@@ -1,4 +1,5 @@
-﻿using Harmony;
+﻿using GetGlam.Framework.ContentEditors;
+using Harmony;
 using StardewModdingAPI;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace GetGlam.Framework.Patches
                     if (codeInstruction.opcode == OpCodes.Ldc_I4_S)
                     {
                         // Create the new instruction and add it to the new list
-                        CodeInstruction newIntInstruction = codeInstruction.operand.Equals(0x18) ? new CodeInstruction(OpCodes.Call, typeof(ImageInjector).GetMethod(nameof(ImageInjector.GetNumberOfSkinColor))) : new CodeInstruction(OpCodes.Call, (typeof(ImageInjector).GetMethod(nameof(ImageInjector.GetNumberOfSkinColorMinusOne))));
+                        CodeInstruction newIntInstruction = codeInstruction.operand.Equals(0x18) ? new CodeInstruction(OpCodes.Call, typeof(ImageInjector).GetMethod(nameof(SkinEditor.GetNumberOfSkinColor))) : new CodeInstruction(OpCodes.Call, (typeof(ImageInjector).GetMethod(nameof(SkinEditor.GetNumberOfSkinColorMinusOne))));
                         newInstructions.Add(newIntInstruction);
                     }
                     else
