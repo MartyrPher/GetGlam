@@ -56,12 +56,12 @@ namespace GetGlam.Framework.Patches
                     }
                 }
 
-                //Return the new instructions for the method
+                // Return the new instructions for the method
                 return newInstructions;
             }
             catch (Exception e)
             {
-                //Something went boom, so we abort and send the orginal method instructions
+                // Something went boom, so we abort and send the orginal method instructions
                 Entry.Monitor.Log($"Failed in {nameof(ChangeSkinColorTranspiler)}:\n{e}", LogLevel.Error);
                 return instructions;
             }
