@@ -4,11 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GetGlam.Framework.ContentEditors
 {
@@ -99,7 +95,9 @@ namespace GetGlam.Framework.ContentEditors
         /// <param name="dresser">Current dresser patched</param>
         private void PatchDresserTexture(DresserModel dresser)
         {
-            Asset.AsImage().PatchImage(dresser.Texture, null, new Rectangle(0, DresserTextureHeight, 16, dresser.TextureHeight));
+            Asset.AsImage().PatchImage(dresser.Texture,
+                null,
+                new Rectangle(0, DresserTextureHeight, SingleDresserWidth, dresser.TextureHeight));
         }
 
         /// <summary>
