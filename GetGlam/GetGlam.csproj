@@ -53,7 +53,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Framework\CharacterLoader.cs" />
+    <Compile Include="Framework\ContentEditors\AccessoryEditor.cs" />
+    <Compile Include="Framework\ContentEditors\DresserEditor.cs" />
     <Compile Include="Framework\ContentEditors\HairEditor.cs" />
+    <Compile Include="Framework\ContentEditors\SkinEditor.cs" />
     <Compile Include="Framework\ContentLoader.cs" />
     <Compile Include="Framework\ContentLoaders\AccessoryLoader.cs" />
     <Compile Include="Framework\ContentLoaders\BaseLoader.cs" />
