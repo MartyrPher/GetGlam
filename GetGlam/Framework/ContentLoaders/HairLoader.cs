@@ -67,7 +67,7 @@ namespace GetGlam.Framework.ContentLoaders
             hairstyleTwo.ModName = "Hairstyles 2";
             hairstyleTwo.TextureHeight = hairstyleTwo.Texture.Height;
             hairstyleTwo.NumberOfHairstyles = 23;
-            PackHelper.NumberOfHairstlyesAdded += 23;
+            PackHelper.NumberOfHairstlyesAdded += hairstyleTwo.NumberOfHairstyles;
             PackHelper.HairList.Add(hairstyleTwo);
         }
 
