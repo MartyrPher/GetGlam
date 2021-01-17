@@ -264,9 +264,10 @@ namespace GetGlam.Framework
             if (Dresser.Texture.Height == 32)
                 Dresser.TextureSourceRect.Y = 0;
             else
-                Dresser.TextureSourceRect.Y = dresserIndex.Equals(1) ? 0 : dresserIndex * 32 - 32;
+                Dresser.TextureSourceRect.Y = dresserIndex * 32 - 32;
 
             Dresser.SetDresserTileSheetPoint(dresserIndex);
+            Dresser.UpdateDresserInFarmHouse();
         }
 
         /// <summary>
