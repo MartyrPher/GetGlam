@@ -80,13 +80,21 @@ namespace GetGlam.Framework.ContentEditors
                             return;
                         }
 
-                        PatchHairTexture(hair, hairTextureX, hairTextureY);
-                        ChangeHairLocationOnSourceTexture(hair, ref hairTextureX, ref hairTextureY);
-                        ChangeHairLocationOnNewTexture();
+                        try
+                        {
+                            PatchHairTexture(hair, hairTextureX, hairTextureY);
+                            ChangeHairLocationOnSourceTexture(hair, ref hairTextureX, ref hairTextureY);
+                            ChangeHairLocationOnNewTexture();
+                        }
+                        catch 
+                        {
+                            Entry.Monitor.Log($"{hair.ModName} NumberOfHairstyles is wrong. Some hairstyles may have been added anyway.", LogLevel.Error);
+                            break;
+                        }
                     }
                 }
 
-                CutBlankImage();
+                //CutBlankImage();
             }
         }
 
@@ -109,10 +117,10 @@ namespace GetGlam.Framework.ContentEditors
         /// <param name="hairTextureY">Y where texture is being patched</param>
         private void PatchHairTexture(HairModel hair, int hairTextureX, int hairTextureY)
         {
-            if (Entry.IsSpaceCoreInstalled)
-                Entry.HarmonyHelper.SpaceCorePatchExtendedTileSheet(Asset.AsImage(), hair.Texture, new Rectangle(hairTextureX, hairTextureY, SingleHairstyleWidth, SingleHairstyleHeight), new Rectangle(HairTextureWidth, HairTextureHeight, SingleHairstyleWidth, SingleHairstyleHeight));
-            else
-                Asset.AsImage().PatchImage(hair.Texture, new Rectangle(hairTextureX, hairTextureY, SingleHairstyleWidth, SingleHairstyleHeight), new Rectangle(HairTextureWidth, HairTextureHeight, SingleHairstyleWidth, SingleHairstyleHeight));
+                if (Entry.IsSpaceCoreInstalled)
+                    Entry.HarmonyHelper.SpaceCorePatchExtendedTileSheet(Asset.AsImage(), hair.Texture, new Rectangle(hairTextureX, hairTextureY, SingleHairstyleWidth, SingleHairstyleHeight), new Rectangle(HairTextureWidth, HairTextureHeight, SingleHairstyleWidth, SingleHairstyleHeight));
+                else
+                    Asset.AsImage().PatchImage(hair.Texture, new Rectangle(hairTextureX, hairTextureY, SingleHairstyleWidth, SingleHairstyleHeight), new Rectangle(HairTextureWidth, HairTextureHeight, SingleHairstyleWidth, SingleHairstyleHeight));
         }
 
         /// <summary>
