@@ -3,13 +3,13 @@ using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using Microsoft.Xna.Framework.Graphics;
+using GetGlam.Framework.Menus;
 
 namespace GetGlam
 {
     public class ModEntry : Mod
     {
         /// TODO for bugfixes
-        /// Skin Tone with Favorites - fixed
         /// Option to not include bases
         /// Favorites not saving on reload
 

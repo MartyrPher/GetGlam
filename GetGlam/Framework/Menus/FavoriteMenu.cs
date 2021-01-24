@@ -1,4 +1,5 @@
 ﻿using GetGlam.Framework.DataModels;
+using GetGlam.Framework.Menus;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
