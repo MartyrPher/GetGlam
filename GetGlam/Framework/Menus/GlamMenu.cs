@@ -153,7 +153,7 @@ namespace GetGlam.Framework.Menus
         public void RestoreSnapshot()
         {
             Game1.player.changeGender(FarmerSnapshot[0] == 0 ? true : false);
-            Game1.player.skin.Set(FarmerSnapshot[2]);
+            Game1.player.changeSkinColor(FarmerSnapshot[2], true);
             Game1.player.hair.Set(FarmerSnapshot[3]);
             Game1.player.changeAccessory(FarmerSnapshot[7]);
 
