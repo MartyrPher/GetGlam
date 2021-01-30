@@ -15,7 +15,7 @@ namespace GetGlam.Framework.Menus.Components
         private GlamMenuComponents MenuComponents;
 
         // List of new labels added to the menu
-        private List<ClickableComponent> NewLabels = new List<ClickableComponent>();
+        public List<ClickableComponent> NewLabels = new List<ClickableComponent>();
 
         // Label for the Hat Hair Fix
         public ClickableComponent HatFixLabel;
@@ -91,7 +91,7 @@ namespace GetGlam.Framework.Menus.Components
                     Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
                     Utility.drawTextWithShadow(b, Menu.NoseIndex.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);
                 }
-                else if (component.name.Equals("Shoe"))
+                else if (component.name.Equals("Shoe") && MenuComponents.ShouldDrawShoeButtons)
                 {
                     Utility.drawTextWithShadow(b, component.name, Game1.smallFont, new Vector2(component.bounds.X, component.bounds.Y), Game1.textColor);
                     Utility.drawTextWithShadow(b, Menu.ShoeIndex.ToString(), Game1.smallFont, new Vector2(component.bounds.X + 16, component.bounds.Y + 32), Game1.textColor);

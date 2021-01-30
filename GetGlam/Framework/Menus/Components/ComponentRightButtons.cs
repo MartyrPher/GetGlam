@@ -92,7 +92,7 @@ namespace GetGlam.Framework.Menus.Components
         {
             foreach (ClickableTextureComponent component in NewRightButtonsList)
             {
-                if (component.bounds.Contains(x, y))
+                if (component.bounds.Contains(x, y) && component.visible)
                 {
                     SelectionClick(component.name, 1);
                     MenuComponents.ChangeScaleLeftClick(component);

@@ -48,9 +48,18 @@ namespace GetGlam.Framework.Menus
         // Whether to draw the face and nose buttons
         public bool ShouldDrawNosesAndFaceButtons = false;
 
+        // Whether to draw the shoe buttons
+        public bool ShouldDrawShoeButtons = false;
+
         // Whether the button is selected
         public bool IsHatFixSelected = false;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="menu"></param>
+        /// <param name="packHelper"></param>
         public GlamMenuComponents(ModEntry entry, GlamMenu menu, ContentPackHelper packHelper)
         {
             Entry = entry;
@@ -60,6 +69,9 @@ namespace GetGlam.Framework.Menus
             InitializeComponents();
         }
 
+        /// <summary>
+        /// Initialized Different Components.
+        /// </summary>
         public void InitializeComponents()
         {
             LeftButtons = new ComponentLeftButtons(Menu, this);
@@ -68,6 +80,10 @@ namespace GetGlam.Framework.Menus
             Labels = new ComponentLabels(Menu, this);
         }
 
+        /// <summary>
+        /// Sets Up The Components.
+        /// </summary>
+        /// <remarks>This is also called on WindowChanged.</remarks>
         public void SetUpMenuComponents()
         {
             ClearLists();
@@ -82,6 +98,7 @@ namespace GetGlam.Framework.Menus
             EnableBaseButton();
             EnableDresserButtons();
             EnableFaceNoseButtons();
+            EnableShoesButton();
         }
 
         /// <summary>
@@ -112,10 +129,17 @@ namespace GetGlam.Framework.Menus
         /// </summary>
         private void SetButtonsToInvisible()
         {
+            // Base
             LeftButtons.SetComponentVisible(false, 0);
             RightButtons.SetComponentVisible(false, 0);
+
+            // Dresser
             LeftButtons.SetComponentVisible(false, 7);
             RightButtons.SetComponentVisible(false, 7);
+
+            // Shoes
+            LeftButtons.SetComponentVisible(false, 6);
+            RightButtons.SetComponentVisible(false, 6);
         }
 
         /// <summary>
@@ -156,7 +180,7 @@ namespace GetGlam.Framework.Menus
         /// </summary>
         private void EnableFaceNoseButtons()
         {
-            if (PackHelper.GetNumberOfFacesAndNoses(Game1.player.isMale, Menu.BaseIndex, true) > 0)
+            if (PackHelper.GetNumberOfFacesAndNoses(Game1.player.isMale, Menu.BaseIndex, true) > 0 && Entry.Config.PatchFaceNose)
             {
                 ShouldDrawNosesAndFaceButtons = true;
                 UpdateFaceAndNoseButtonsPositions(ShouldDrawNosesAndFaceButtons);
@@ -169,12 +193,25 @@ namespace GetGlam.Framework.Menus
         }
 
         /// <summary>
+        /// Enables Shoe Button.
+        /// </summary>
+        private void EnableShoesButton()
+        {
+            if (Entry.Config.PatchShoes)
+            {
+                LeftButtons.SetComponentVisible(true, 6);
+                RightButtons.SetComponentVisible(true, 6);
+                ShouldDrawShoeButtons = true;
+            }
+        }
+
+        /// <summary>
         /// Update the buttons for changing the face and nose.
         /// </summary>
         /// <param name="isFaceAndNoseDrawing">Whether the face and nose buttons are drawing</param>
         private void UpdateFaceAndNoseButtonsPositions(bool isFaceAndNoseDrawing)
         {
-            if (isFaceAndNoseDrawing)
+            if (isFaceAndNoseDrawing && Entry.Config.PatchFaceNose)
             {
                 LeftButtons.SetComponentVisible(true, 4);
                 LeftButtons.SetComponentVisible(true, 5);
@@ -198,6 +235,11 @@ namespace GetGlam.Framework.Menus
             }
         }
 
+        /// <summary>
+        /// Handles Perform Hover Logic.
+        /// </summary>
+        /// <param name="x">X position of the mouse</param>
+        /// <param name="y">Y position of the mouse</param>
         public void OnHover(int x, int y) 
         {
             LeftButtons.OnHover(x, y);
@@ -208,6 +250,14 @@ namespace GetGlam.Framework.Menus
                 Game1.SetFreeCursorDrag();
         }
 
+        /// <summary>
+        /// Changes Scale When A Component Is Hovered.
+        /// </summary>
+        /// <param name="component">Current Component</param>
+        /// <param name="x">X Position Of The Mouse</param>
+        /// <param name="y">Y Position Of The Mouse</param>
+        /// <param name="min">The Minimum Scale</param>
+        /// <param name="max">The Maximum Scale</param>
         public void ChangeHoverActionScale(ClickableTextureComponent component, int x, int y, float min, float max)
         {
             if (component.containsPoint(x, y))
@@ -216,6 +266,12 @@ namespace GetGlam.Framework.Menus
                 component.scale = Math.Max(component.scale - min, component.baseScale);
         }
 
+        /// <summary>
+        /// Logic For Holding In LeftClick.
+        /// </summary>
+        /// <param name="x">X Position Of The Mouse</param>
+        /// <param name="y">Y Position Of The Mouse</param>
+        /// <remarks>Used For ColorPickers</remarks>
         public void LeftClickHeld(int x, int y)
         {
             if (EyeColorPicker.containsPoint(x, y))
@@ -233,6 +289,11 @@ namespace GetGlam.Framework.Menus
             }
         }
 
+        /// <summary>
+        /// Logic For Releasing Left Click.
+        /// </summary>
+        /// <param name="x">X Position Of The Mouse</param>
+        /// <param name="y">Y Position Of The Mouse</param>
         public void LeftClickReleased(int x, int y)
         {
             if (EyeColorPicker.containsPoint(x, y))
@@ -242,6 +303,11 @@ namespace GetGlam.Framework.Menus
                 HairColorPicker.releaseClick();
         }
 
+        /// <summary>
+        /// Logic For Left Click.
+        /// </summary>
+        /// <param name="x">X Position Of The Mouse</param>
+        /// <param name="y">Y Position Of The Mouse</param>
         public void LeftClick(int x, int y)
         {
             LeftButtons.LeftClick(x, y);
@@ -251,6 +317,11 @@ namespace GetGlam.Framework.Menus
             LeftClickColorPicker(x, y);
         } 
 
+        /// <summary>
+        /// ColorPicker Left Click.
+        /// </summary>
+        /// <param name="x">X Position Of The Mouse</param>
+        /// <param name="y">Y Position Of The Mouse</param>
         public void LeftClickColorPicker(int x, int y)
         {
             // Eye and Color Picker clicks
@@ -261,6 +332,10 @@ namespace GetGlam.Framework.Menus
                 Game1.player.changeHairColor(HairColorPicker.click(x, y));
         }    
 
+        /// <summary>
+        /// Changes Scale Of A Component When Clicked.
+        /// </summary>
+        /// <param name="component">The Current Component</param>
         public void ChangeScaleLeftClick(ClickableTextureComponent component)
         {
             if (component.scale != 0f)
@@ -270,6 +345,10 @@ namespace GetGlam.Framework.Menus
             }
         }
 
+        /// <summary>
+        /// Checks If The Player Is Bald.
+        /// </summary>
+        /// <param name="component">Current Component</param>
         public void CheckIfBald(ClickableTextureComponent component)
         {
             if (Game1.player.hair.Value - 49 <= 6 && !Menu.IsBald && component.name.Contains("ChangeHair"))
@@ -284,6 +363,10 @@ namespace GetGlam.Framework.Menus
             }
         }
 
+        /// <summary>
+        /// Handles Drawing Components.
+        /// </summary>
+        /// <param name="b">Games SpriteBatch</param>
         public void Draw(SpriteBatch b)
         {
             DrawDresser(b);
@@ -297,15 +380,19 @@ namespace GetGlam.Framework.Menus
             HairColorPicker.draw(b);
         }
 
+        /// <summary>
+        /// Draws The Dresser.
+        /// </summary>
+        /// <param name="b">Games SpriteBatch</param>
         private void DrawDresser(SpriteBatch b)
         {
             if (Menu.Config.DrawDresserInMenu)
-                b.Draw(Menu.Dresser.Texture, new Vector2(Menu.xPositionOnScreen + Menu.width / 2 - 96, Menu.yPositionOnScreen + Menu.height / 2 - 80), Menu.Dresser.TextureSourceRect, Color.White, 0f, Vector2.Zero, 12f, SpriteEffects.None, 0.86f);
+                b.Draw(PackHelper.DresserTexture, new Vector2(Menu.xPositionOnScreen + Menu.width / 2 - 96, Menu.yPositionOnScreen + Menu.height / 2 - 80), Menu.Dresser.TextureSourceRect, Color.White, 0f, Vector2.Zero, 12f, SpriteEffects.None, 0.86f);
             else
             {
                 b.Draw(Game1.daybg, new Vector2(Menu.xPositionOnScreen + Menu.width / 2 - 64, Menu.yPositionOnScreen + Menu.height / 2 - 64), Color.White);
                 if (ShouldDrawDresserButtons)
-                    b.Draw(Menu.Dresser.Texture, new Vector2(RightButtons.GetIndex(4).bounds.X + 64, RightButtons.GetIndex(4).bounds.Y), Menu.Dresser.TextureSourceRect, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0.86f);
+                    b.Draw(PackHelper.DresserTexture, new Vector2(RightButtons.GetIndex(4).bounds.X + 64, RightButtons.GetIndex(4).bounds.Y), Menu.Dresser.TextureSourceRect, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0.86f);
             }
         }
     }

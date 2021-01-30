@@ -55,8 +55,12 @@ namespace GetGlam.Framework
         public Texture2D LoadPlayerBase()
         {
             Texture2D playerBase = LoadAndSetPlayerBaseTexture();
-            SetPlayerFaceAndNose(playerBase);
-            PatchPlayerShoes(playerBase);
+
+            if (Entry.Config.PatchFaceNose)
+                SetPlayerFaceAndNose(playerBase);
+
+            if (Entry.Config.PatchShoes)
+                PatchPlayerShoes(playerBase);
 
             //Return the new player base
             return playerBase;
