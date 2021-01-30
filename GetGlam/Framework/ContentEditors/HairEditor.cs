@@ -88,7 +88,7 @@ namespace GetGlam.Framework.ContentEditors
                         }
                         catch 
                         {
-                            Entry.Monitor.Log($"{hair.ModName} NumberOfHairstyles is wrong. Some hairstyles may have been added anyway.", LogLevel.Error);
+                            Entry.Monitor.Log($"{hair.ModName} NumberOfHairstyles is wrong. Some hairstyles may have been added anyway causing baldness in between hair packs.", LogLevel.Error);
                             break;
                         }
                     }
@@ -137,9 +137,6 @@ namespace GetGlam.Framework.ContentEditors
             }
             else
                 hairTextureX += SingleHairstyleWidth;
-
-            Entry.Monitor.Log($"Hairstyle 2 X: {hairTextureX}", LogLevel.Alert);
-            Entry.Monitor.Log($"Hairstyle 2 Y: {hairTextureY}", LogLevel.Alert);
         }
 
         /// <summary>
