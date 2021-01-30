@@ -71,9 +71,17 @@ namespace GetGlam.Framework.ContentEditors
                             return;
                         }
 
-                        PatchAccessoryTexture(accessory, accessoryTextureX, accessoryTextureY);
-                        ChangeHairLocationOnSourceTexture(ref accessoryTextureX, ref accessoryTextureY);
-                        ChangeHairLocationOnNewTexture();
+                        try
+                        {
+                            PatchAccessoryTexture(accessory, accessoryTextureX, accessoryTextureY);
+                            ChangeHairLocationOnSourceTexture(ref accessoryTextureX, ref accessoryTextureY);
+                            ChangeHairLocationOnNewTexture();
+                        }
+                        catch 
+                        {
+                            Entry.Monitor.Log($"{accessory.ModName} NumberOfAccessories is wrong. Some accessories may have been added anyway causing blank ones to show in between packs.", LogLevel.Error);
+                            break;
+                        }
                     }
                 }
 
