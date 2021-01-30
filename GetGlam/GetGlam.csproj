@@ -74,6 +74,7 @@
     <Compile Include="Framework\DataModels\FavoriteModel.cs" />
     <Compile Include="Framework\DataModels\HairModel.cs" />
     <Compile Include="Framework\DresserHandler.cs" />
+    <Compile Include="Framework\DresserHandlerJson.cs" />
     <Compile Include="Framework\Menus\Components\ComponentButtons.cs" />
     <Compile Include="Framework\Menus\Components\ComponentLabels.cs" />
     <Compile Include="Framework\Menus\Components\ComponentLeftButtons.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Framework\HatEditor.cs" />
     <Compile Include="Framework\ImageInjector.cs" />
     <Compile Include="Framework\Menus\GlamMenuComponents.cs" />
+    <Compile Include="Framework\Menus\SearchMenu.cs" />
     <Compile Include="Framework\Patches\SkinColorPatch.cs" />
     <Compile Include="Framework\PlayerChanger.cs" />
     <Compile Include="Framework\SaveLoadMenuPatcher.cs" />
@@ -93,6 +95,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\json\BigCraftables\GlamDresser\big-craftable.json" />
+    <None Include="assets\json\content-pack.json" />
     <None Include="manifest.json" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -112,6 +116,7 @@
     <Content Include="assets\female_face1_nose1_bald.png" />
     <Content Include="assets\female_face1_nose2.png" />
     <Content Include="assets\female_face1_nose2_bald.png" />
+    <Content Include="assets\json\BigCraftables\GlamDresser\big-craftable.png" />
     <Content Include="assets\male_face0_nose0.png" />
     <Content Include="assets\male_face0_nose0_bald.png" />
     <Content Include="assets\male_face0_nose1.png" />

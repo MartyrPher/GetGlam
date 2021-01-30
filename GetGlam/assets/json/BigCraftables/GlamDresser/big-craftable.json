@@ -1,0 +1,25 @@
+{
+	"Name": "Glam Dresser",
+	"Price": 0,
+	"Description": "Get Glam with the dresser",
+	"ProvidesLight": false,
+	"Recipe": {
+		"ResultCount": 1,
+		"Ingredients": [
+			// 20 wood and 4 refined quartz
+			{
+				"Object": 388,
+				"Count": 20
+			},
+			{
+				"Object": 338,
+				"Count": 4
+			}
+		],
+		"IsDefault": false,
+		"CanPurchase": true,
+		"PurchaseFrom": "Robin",
+		"PurchasePrice": 5000,
+		"PurchaseRequirements": null
+	}
+}
