@@ -262,7 +262,7 @@ namespace GetGlam.Framework
         /// <param name="dresserIndex">Index of the Dresser.</param>
         private void UpdateDresser(int dresserIndex)
         {
-            if (Dresser.Texture.Height == 32)
+            if (Dresser.PackHelper.DresserTextureHeight == 32)
                 Dresser.TextureSourceRect.Y = 0;
             else
                 Dresser.TextureSourceRect.Y = dresserIndex * 32 - 32;
@@ -284,7 +284,7 @@ namespace GetGlam.Framework
         /// Sets the players hairstyle.
         /// </summary>
         /// <param name="hairIndex">Index of the hairstyle.</param>
-        private void SetPlayerHairStyle(int hairIndex)
+        public void SetPlayerHairStyle(int hairIndex)
         {
             Game1.player.hair.Set(hairIndex);
         }

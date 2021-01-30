@@ -81,6 +81,7 @@ namespace GetGlam.Framework.ContentLoaders
         {
             Dresser.TextureHeight = Dresser.Texture.Height;
             Dresser.ModName = CurrentContentPack.Manifest.Name;
+            PackHelper.DresserTextureHeight += Dresser.TextureHeight;
         }
 
         /// <summary>

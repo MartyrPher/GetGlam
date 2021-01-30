@@ -62,6 +62,12 @@ namespace GetGlam.Framework
         // Number of accessories added by content packs including default accessories
         public static int NumberOfAccessoriesAdded = 19;
 
+        // The Height Of The Dresser Texture
+        public int DresserTextureHeight = 32;
+
+        // Dresser Texure (It's here since it gets saved to a file)
+        public Texture2D DresserTexture;
+
         // Dictionary Used for Jumping to specific Hair Pack.
         public Dictionary<string, int> HairStyleSearch = new Dictionary<string, int>();
 
@@ -117,9 +123,7 @@ namespace GetGlam.Framework
         private void LoadHair(IContentPack contentPack)
         {
             HairLoader hairLoader = new HairLoader(Entry, contentPack, this);
-            hairLoader.LoadHair();
-
-            HairStyleSearch.Add(contentPack.Manifest.Name, NumberOfHairstlyesAdded); 
+            hairLoader.LoadHair();      
         }
 
         /// <summary>

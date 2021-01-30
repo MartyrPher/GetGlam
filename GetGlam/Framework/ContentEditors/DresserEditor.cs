@@ -22,9 +22,6 @@ namespace GetGlam.Framework.ContentEditors
         // The DresserTexture Height, default: 32
         private int DresserTextureHeight = 32;
 
-        // Was the Dresser image already edited???
-        private bool WasDresserImageEdited = false;
-
         // The max skin color texture height
         private const int MaxSkinColorTextureHeight = 4096;
 
@@ -51,11 +48,6 @@ namespace GetGlam.Framework.ContentEditors
         {
             if (Asset.AssetNameEquals($"Mods/{Entry.ModManifest.UniqueID}/dresser.png"))
             {
-                // Break if the image was already edited
-                if (WasDresserImageEdited)
-                    return;
-
-                WasDresserImageEdited = true;
                 CreateNewTexture();
 
                 // Loop through each dresser and patch the image
@@ -78,9 +70,9 @@ namespace GetGlam.Framework.ContentEditors
             }
         }
 
-       /// <summary>
-       /// Creates a new texture from the data of the old texture.
-       /// </summary>
+        /// <summary>
+        /// Creates a new texture from the data of the old texture.
+        /// </summary>
         private void CreateNewTexture()
         {
             Texture2D oldTexture = Asset.AsImage().Data;
@@ -118,6 +110,8 @@ namespace GetGlam.Framework.ContentEditors
             {
                 stream.Close();
             }
+
+            PackHelper.DresserTexture = Entry.Helper.Content.Load<Texture2D>(Path.Combine("assets", "dresser.png"), ContentSource.ModFolder);
         }
 
         /// <summary>

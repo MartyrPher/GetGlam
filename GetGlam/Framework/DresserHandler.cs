@@ -1,6 +1,5 @@
 ﻿using GetGlam.Framework.Menus;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
@@ -21,14 +20,14 @@ namespace GetGlam.Framework
         // Instance of ModConfig
         private ModConfig Config;
 
+        // Instance of ContentPackHelper
+        public ContentPackHelper PackHelper;
+
         // Instance of the FarmHouse GameLocation
         public GameLocation FarmHouse;
 
         // The dressers position in the house
         private Point DresserPosition;
-
-        // The Dressers texture
-        public Texture2D Texture;
 
         // The Dresser texture source rect
         public Microsoft.Xna.Framework.Rectangle TextureSourceRect = new Microsoft.Xna.Framework.Rectangle(0, 0, 16, 32);
@@ -44,11 +43,12 @@ namespace GetGlam.Framework
         /// </summary>
         /// <param name="entry">The instance of <see cref="ModEntry"/></param>
         /// <param name="config">The instance of <see cref="ModConfig"/></param>
-        public DresserHandler(ModEntry entry, ModConfig config)
+        public DresserHandler(ModEntry entry, ModConfig config, ContentPackHelper packHelper)
         {
             // Set the vars to the instances
             Entry = entry;
             Config = config;
+            PackHelper = packHelper;
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace GetGlam.Framework
                 return;
 
             // Create the new Tilesheet
-            TileSheet dresserTilesheet = new TileSheet("z_Dresser", FarmHouse.map, $"Mods/{Entry.ModManifest.UniqueID}/dresser.png", new Size(1, Texture.Height / 16), new Size(16, 16));
+            TileSheet dresserTilesheet = new TileSheet("z_Dresser", FarmHouse.map, $"Mods/{Entry.ModManifest.UniqueID}/dresser.png", new Size(1, PackHelper.DresserTextureHeight / 16), new Size(16, 16));
 
             // Get the dresser position
             DresserPosition = GetDresserPosition();
@@ -145,14 +145,6 @@ namespace GetGlam.Framework
         }
 
         /// <summary>
-        /// Set the Dressers texture.
-        /// </summary>
-        public void SetDresserTexture()
-        {
-            Texture = Entry.Helper.Content.Load<Texture2D>($"Mods/{Entry.ModManifest.UniqueID}/dresser.png", ContentSource.GameContent);
-        }
-
-        /// <summary>
         /// Sets the dresser tilesheet point.
         /// </summary>
         /// <param name="dresserIndex">The current dresser index</param>
@@ -168,7 +160,7 @@ namespace GetGlam.Framework
         /// <returns>The number of dressers</returns>
         public int GetNumberOfDressers()
         {
-            return Texture.Height / 32;
+            return PackHelper.DresserTextureHeight / 32;
         }
 
         /// <summary>
