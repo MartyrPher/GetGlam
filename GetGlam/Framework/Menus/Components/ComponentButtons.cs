@@ -29,8 +29,11 @@ namespace GetGlam.Framework.Menus.Components
         // Tab Button for the favorite menu
         private ClickableTextureComponent FavoriteMenuTab;
 
-        // Tab Button the Glam Menu
+        // Tab Button for Glam Menu
         private ClickableTextureComponent GlamMenuTab;
+
+        // Tab Button for Search Menu
+        private ClickableTextureComponent SearchMenuTab;
 
         // Clothing tab
         private ClickableTextureComponent ClothingTab;
@@ -60,6 +63,8 @@ namespace GetGlam.Framework.Menus.Components
         {
             FavoriteMenuTab = new ClickableTextureComponent("FavoriteTab", new Rectangle(Menu.xPositionOnScreen - IClickableMenu.borderWidth - 8, Menu.yPositionOnScreen + 160, 64, 64), null, "FavoriteTab", Game1.mouseCursors, new Rectangle(656, 80, 16, 16), 4f, false);
             GlamMenuTab = new ClickableTextureComponent(new Rectangle(Menu.xPositionOnScreen - IClickableMenu.borderWidth + 1, Menu.yPositionOnScreen + 96, 64, 64), Game1.mouseCursors, new Rectangle(672, 80, 15, 16), 4f, false);
+            SearchMenuTab = new ClickableTextureComponent(new Rectangle(Menu.xPositionOnScreen - IClickableMenu.borderWidth - 8, Menu.yPositionOnScreen + 400, 64, 64), Game1.mouseCursors2, new Rectangle(96, 48, 16, 16), 4f, false);
+
             HatCoversHairButton = new ClickableTextureComponent("HatFix", new Rectangle(Menu.xPositionOnScreen + Menu.width / 2 - 114, Menu.yPositionOnScreen + 128, 36, 36), null, "Hat Hair Fix", Game1.mouseCursors, new Rectangle(227, 425, 9, 9), 4f, false);
             AddToFavoritesButton = new ClickableTextureComponent("Favorite", new Rectangle(Menu.xPositionOnScreen + Menu.width - 96, Menu.yPositionOnScreen + 224, 48, 48), null, "Favorite", Game1.mouseCursors, new Rectangle(346, 392, 8, 8), 6f, false);
 
@@ -150,6 +155,7 @@ namespace GetGlam.Framework.Menus.Components
             LeftClickGenderButtons(x, y);
             LeftClickFavoritesButton(x, y);
             LeftClickFavoriteMenu(x, y);
+            LeftClickSearchMenu(x, y);
             LeftClickOkayButton(x, y);
             LeftClickCancelButton(x, y);
             LeftClickCustomizeAnywhere(x, y);
@@ -220,6 +226,17 @@ namespace GetGlam.Framework.Menus.Components
                 Menu.TakeSnapshot();
                 Game1.activeClickableMenu = new FavoriteMenu(Entry, Menu.PlayerLoader, Menu);
             }
+        }
+
+        /// <summary>
+        /// Left Click Search Menu.
+        /// </summary>
+        /// <param name="x">X position of the mouse</param>
+        /// <param name="y">Y position of the mouse</param>
+        public void LeftClickSearchMenu(int x, int y)
+        {
+            if (SearchMenuTab.containsPoint(x, y))
+                Game1.activeClickableMenu = new SearchMenu(Entry, Menu);
         }
 
         /// <summary>
@@ -305,6 +322,7 @@ namespace GetGlam.Framework.Menus.Components
             // Draw the tabs
             FavoriteMenuTab.draw(b);
             GlamMenuTab.draw(b);
+            SearchMenuTab.draw(b);
 
             if (Entry.IsCustomizeAnywhereInstalled)
                 ClothingTab.draw(b);

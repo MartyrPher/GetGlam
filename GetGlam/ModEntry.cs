@@ -2,25 +2,23 @@
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
-using Microsoft.Xna.Framework.Graphics;
 using GetGlam.Framework.Menus;
 
 namespace GetGlam
 {
     public class ModEntry : Mod
     {
-        /// TODO for bugfixes
-        /// Option to not include bases
-        /// Favorites not saving on reload
-
         // The mods config
-        private ModConfig Config;
+        public ModConfig Config;
 
         // Instance of ContentPackHelper
         private ContentPackHelper PackHelper;
 
         // Instance of DresserHandler
         private DresserHandler Dresser;
+        
+        // Instance of DresserHandlerJson
+        private DresserHandlerJson DresserJson;
 
         // Instance of GlamMenu
         private GlamMenu Menu;
@@ -43,6 +41,9 @@ namespace GetGlam
         // Whether Customize Anywhere is installed
         public bool IsCustomizeAnywhereInstalled = false;
 
+        // Whether Json Assets is installed
+        public bool IsJsonAssetsInstalled = false;
+
         /// <summary>
         /// The mods entry point.
         /// </summary>>
@@ -60,7 +61,6 @@ namespace GetGlam
             if (IsSpaceCoreInstalled)
                 RegisterSpaceCoreSheets();
 
-
             MenuPatcher.Initialize();
             HarmonyHelper.InitializeAndPatch();
 
@@ -74,7 +74,7 @@ namespace GetGlam
         {
             PackHelper = new ContentPackHelper(this);
             PlayerChanger = new PlayerChanger(this, PackHelper);
-            Dresser = new DresserHandler(this, Config);
+            Dresser = new DresserHandler(this, Config, PackHelper);
             PlayerLoader = new CharacterLoader(this, PlayerChanger, Dresser);
             MenuPatcher = new SaveLoadMenuPatcher(this, PlayerLoader);
             HarmonyHelper = new HarmonyHelper(this);
@@ -98,6 +98,7 @@ namespace GetGlam
         {
             CheckIfSpaceCoreIsInstalled();
             CheckIfCustomizeAnywhereIsInstalled();
+            CheckIfJsonAssetsIsInstalled();
         }
 
         /// <summary>
@@ -115,7 +116,16 @@ namespace GetGlam
         private void CheckIfCustomizeAnywhereIsInstalled()
         {
             IsCustomizeAnywhereInstalled = Helper.ModRegistry.IsLoaded("Cherry.CustomizeAnywhere");
-            Monitor.Log($"Customize AnyWhere Installed: {IsCustomizeAnywhereInstalled}", LogLevel.Trace);
+            Monitor.Log($"Customize Anywhere Installed: {IsCustomizeAnywhereInstalled}", LogLevel.Trace);
+        }
+
+        /// <summary>
+        /// Checks if the mod Json Assets is currently installed.
+        /// </summary>
+        private void CheckIfJsonAssetsIsInstalled()
+        {
+            IsJsonAssetsInstalled= Helper.ModRegistry.IsLoaded("spacechase0.JsonAssets");
+            Monitor.Log($"Json Assets Installed: {IsJsonAssetsInstalled}", LogLevel.Trace);
         }
 
         /// <summary>
@@ -133,7 +143,7 @@ namespace GetGlam
         /// <param name="sender"> The object</param>
         /// <param name="e"> The Save Loaded Event arguement</param>
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
-        {
+        {      
             SetUpDresser();
             CreateAndAssignDresserMenu();
             PlayerLoader.LoadCharacterLayout(Menu);
@@ -145,7 +155,6 @@ namespace GetGlam
         private void SetUpDresser()
         {
             Dresser.FarmHouse = Game1.getLocationFromName("FarmHouse");
-            Dresser.SetDresserTexture();
             Dresser.PlaceDresser();
         }
 
@@ -156,6 +165,12 @@ namespace GetGlam
         {
             Menu = new GlamMenu(this, Config, PackHelper, Dresser, PlayerLoader, PlayerChanger);
             Dresser.Menu = Menu;
+
+            if (IsJsonAssetsInstalled)
+            {
+                DresserJson.SetMenu(Menu);
+                DresserJson.GetCraftableId();
+            }
         }
 
         /// <summary>
@@ -170,8 +185,10 @@ namespace GetGlam
             if (Config.NewHatsIgnoreHair)
                 Helper.Content.AssetEditors.Add(new HatEditor(this));
 
-            // Load the dresser image and read the content packs
-            Game1.content.Load<Texture2D>($"Mods/{this.ModManifest.UniqueID}/dresser.png");
+            if (IsJsonAssetsInstalled)
+                DresserJson = new DresserHandlerJson(this);
+
+            // Read The Content Packs
             PackHelper.ReadContentPacks();
         }
 
@@ -199,19 +216,30 @@ namespace GetGlam
             {
                 Menu.TakeSnapshot();
                 ChangePlayerDirection();
+                OpenGlamMenu();
             }
 
             Dresser.DresserInteractCheck(e.Button);
+
+            if (IsJsonAssetsInstalled)
+                DresserJson.CheckJsonInput(sender, e);
         }
 
         /// <summary>
         /// Chnages the player direction to face forward and opens the menu.
         /// </summary>
-        private void ChangePlayerDirection()
+        public void ChangePlayerDirection()
         {
             Game1.player.faceDirection(2);
             Game1.player.FarmerSprite.StopAnimation();
             Game1.player.completelyStopAnimatingOrDoingAction();
+        }
+
+        /// <summary>
+        /// Opens the Glam Menu.
+        /// </summary>
+        public void OpenGlamMenu()
+        {
             Game1.activeClickableMenu = Menu;
         }
     }

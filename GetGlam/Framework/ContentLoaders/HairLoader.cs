@@ -47,6 +47,9 @@ namespace GetGlam.Framework.ContentLoaders
                 {
                     CreateNewHairModel();
                     SetHairModelVariables();
+
+                    PackHelper.HairStyleSearch.Add(CurrentContentPack.Manifest.Name, PackHelper.NumberOfHairstlyesAdded);
+
                     AddNumberOfHairstyles();
                     AddHairToHairList();
                 }
@@ -67,6 +70,8 @@ namespace GetGlam.Framework.ContentLoaders
             hairstyleTwo.ModName = "Hairstyles 2";
             hairstyleTwo.TextureHeight = hairstyleTwo.Texture.Height;
             hairstyleTwo.NumberOfHairstyles = 23;
+
+            PackHelper.HairStyleSearch.Add("Default 1.5 Hair", PackHelper.NumberOfHairstlyesAdded);
             PackHelper.NumberOfHairstlyesAdded += hairstyleTwo.NumberOfHairstyles;
             PackHelper.HairList.Add(hairstyleTwo);
         }

@@ -58,20 +58,9 @@ namespace GetGlam.Framework.Menus
         // Snapshot of eyecolor
         private Color EyeColorSnapshot;
 
-        ///********************************
-        ///Variables for the Search Tab
-        ///********************************
-        //private ClickableTextureComponent SearchTab;
-
-        //private bool OpenSearchTab = false;
-
-        //private Vector2 DialogueBoxBounds;
-
-        private int AnimationSpeed;
-
-        //private OptionsDropDown DropDownSearch;
-
-        /// <summary>Glam Menu's Conrstructor</summary>
+        /// <summary>
+        /// Glam Menu's Constructor.
+        /// </summary>
         /// <param name="entry">Instance of <see cref="ModEntry"/></param>
         /// <param name="packHelper">Instance of <see cref="ContentPackHelper"/></param>
         /// <param name="dresser">Instance of <see cref="DresserHandler"/></param>
@@ -88,9 +77,7 @@ namespace GetGlam.Framework.Menus
             MenuComponents = new GlamMenuComponents(Entry, this, packHelper);
 
             CheckPlayerForHat();
-            MenuComponents.SetUpMenuComponents();
-
-            AnimationSpeed = Config.ClothingTabAnimationSpeed;
+            MenuComponents.SetUpMenuComponents();    
         }
 
         /// <summary>
@@ -165,24 +152,6 @@ namespace GetGlam.Framework.Menus
         }
 
         /// <summary>
-        /// Sets the position for all the UI elements in the menu.
-        /// </summary>
-        private void SetUpPositions()
-        { 
-            //Set up the Search tab stuff
-            //DialogueBoxBounds = new Vector2(this.xPositionOnScreen, this.yPositionOnScreen + 300);
-
-            //SearchTab = new ClickableTextureComponent(new Rectangle(this.xPositionOnScreen - IClickableMenu.borderWidth - 8, this.yPositionOnScreen + 400, 64, 64), Game1.mouseCursors2, new Rectangle(96, 48, 16, 16), 4f, false);
-
-            //DropDownSearch = new OptionsDropDown("", 0);
-            //DropDownSearch.bounds = new Rectangle(SearchTab.bounds.X, SearchTab.bounds.Y, 0, 32);
-            //DropDownSearch.dropDownBounds = new Rectangle(SearchTab.bounds.X - 128, SearchTab.bounds.Y, 128, 128);
-
-            //foreach (string hairPack in PackHelper.HairStyleSearch.Keys)
-            //    DropDownSearch.dropDownDisplayOptions.Add(hairPack);
-        } 
-
-        /// <summary>
         /// Override to change the menu when the window size changes.
         /// </summary>
         /// <param name="oldBounds">The old bounds</param>
@@ -220,18 +189,6 @@ namespace GetGlam.Framework.Menus
 
             MenuComponents.LeftClick(x, y);
             MenuComponents.LeftClickColorPicker(x, y);
-
-            //Check if the search tab has been clicked
-            //if (SearchTab.containsPoint(x, y))
-            //{
-            //    if (!OpenSearchTab)
-            //        OpenSearchTab = true;
-            //    else
-            //        OpenSearchTab = false;
-            //}
-
-            //if (DropDownSearch.bounds.Contains(x, y))
-            //    DropDownSearch.receiveLeftClick(x, y);
         }
 
         /// <summary>Override to handle the left click being held</summary>
@@ -254,42 +211,15 @@ namespace GetGlam.Framework.Menus
 
         /// <summary>Override to handles updating a menu per tick</summary>
         /// <param name="time">The amount of GameTime</param>
-        //public override void update(GameTime time)
-        //{
-        //    base.update(time);
-
-        //    //Check if to open the menu
-        //    if (OpenSearchTab)
-        //    {
-        //        //Change the tab bounds
-        //        if (SearchTab.bounds.X > 10)
-        //            SearchTab.bounds.X -= AnimationSpeed;
-
-        //        //Change the dialouge bounds
-        //        if (DialogueBoxBounds.X > 58)
-        //            DialogueBoxBounds.X -= AnimationSpeed;
-        //    }
-        //    //If closing the menu then do the complete opposite
-        //    else if (!OpenSearchTab)
-        //    {
-        //        if (SearchTab.bounds.X < 236)
-        //            SearchTab.bounds.X += AnimationSpeed;
-
-        //        if (DialogueBoxBounds.X < this.xPositionOnScreen)
-        //            DialogueBoxBounds.X += AnimationSpeed;
-        //    }
-        //}
+        public override void update(GameTime time)
+        {
+            base.update(time);
+        }
 
         /// <summary>Override to draw the different menu parts</summary>
         /// <param name="b">The games spritebatch</param>
         public override void draw(SpriteBatch b)
         {
-            //Game1.drawDialogueBox((int)DialogueBoxBounds.X, (int)DialogueBoxBounds.Y, 350, 375, false, true);
-
-            //SearchTab.draw(b);
-
-            //DropDownSearch.draw(b, 0, 0);
-
             // Draw the dialogue box or else Minerva will haunt my dreams
             Game1.drawDialogueBox(this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, false, true);
 
